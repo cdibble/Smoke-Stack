@@ -13,16 +13,16 @@ https://www.sciencedirect.com/science/article/pii/S0048969716327851
 Automatic Identification System (AIS), which tracks the movement of ships using ship-to-shore radio, has been required on large commercial vessels in since 2002. With AIS, it is possible to inventory the emissions of ships while in port and to track trends in air quality in port areas related to shipping activity.
 
 ## Engineering Challenges
-1.Batch process to gather AIS vessel locations.
-1.Filtering to vessels in port areas (geospatial query with a radius around a point).
-1.Join air quality data from AirNow.
-1.Join weather data from NOAA (air temperature, wind speed, precipitation).
-1.Store in database.
-1.Compute cumulative time in port, estimated emissions, air quality and weather summary data for each vessel-visit.
-	1.Delimit a single port visit by a single vessel, store with identifier (maybe just arrival date).
-1.Store vessel visit emission inventory	
-1.Expose via API:
-	1.Query veseel name, port name, date range.
-	1.Summarize cumulative emissions per vessel and port.
+1. Batch process to gather AIS vessel locations.
+1. Filtering to vessels in port areas (geospatial query with a radius around a point).
+1. Join air quality data from AirNow.
+1. Join weather data from NOAA (air temperature, wind speed, precipitation).
+1. Store in database.
+1. Compute cumulative time in port, estimated emissions, air quality and weather summary data for each vessel-visit.
+	1. Delimit a single port visit by a single vessel, store with identifier (maybe just arrival date).
+1. Store vessel visit emission inventory	
+1. Expose via API:
+	1. Query veseel name, port name, date range.
+	1. Summarize cumulative emissions per vessel and port.
 
 ## Tech Stack
