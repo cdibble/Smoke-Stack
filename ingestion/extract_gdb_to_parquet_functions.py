@@ -17,8 +17,11 @@ import pandas as pd
 import datetime
 gdal.UseExceptions() # raise exceptions instead of returning errors
 gdb_path = "/Users/Connor/Documents/InisightDE/1_Project/Data/01_January_2009/Zone1_2009_01.gdb"
+gdb_path = 's3://ais-ship-data-rawData/2010/09_September_2010/Zone4_2010_09/Zone4_2010_09.gdb'
+
 
 # TODO: 
+# Convert pandas manipulations to sparkDF
 # add zone information? comes from file structure...
 # drop unneeded columns consider dropping data fields: 'type' , 'reciever type', 'reciever id'
 # convert the panda df output to a spark rdd
@@ -47,6 +50,7 @@ def parse_gdb(gdb_path, out_path=None):
 			for feature in range(1, features_in_layer + 1): # for each feature, get geometry.
 				try:
 					feature_contents = current_layer.GetFeature(feature).ExportToJson()
+					# USE SPARK STARTING HERE:::
 					feature_df = pd.read_json(feature_contents).T
 					feature_df.loc['properties']['coordinates'] = feature_df.loc['geometry']['coordinates']
 					if feature == 1:
@@ -86,7 +90,10 @@ def parse_gdb(gdb_path, out_path=None):
 
 # Test parse_gdb()
 # feature_list, vessel_feature_list = parse_gdb(gdb_path)
-
+rdd = sc.hadoopFile('s3n://my_bucket/my_file', conf = {
+  'fs.s3n.awsAccessKeyId': '...',
+  'fs.s3n.awsSecretAccessKey': '...',
+})
 # Get contents of AttributeUnits layer once to check it out. current_layer defined for i = 4
 # [current_layer.GetFeature(x).ExportToJson() for x in range(1,features_in_layer+1)]
 # OUTPUT: 

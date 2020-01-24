@@ -19,7 +19,7 @@ import os
 
 import sys
 sys.path.append('./src')
-import  as sf
+import as sf
 	# If running as spark-submit script.
 # conf = SparkConf().setAppName("AIS_Extract").setMaster(master)
 # sc = SparkContext(conf=conf)
