@@ -1,3 +1,11 @@
+# Repo files
+aws_setup.sh
+linux_ops.sh
+data_dl_to_ec2_xfer_to_s3.sh
+spark_install.sh
+notes_snippets_.py
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
