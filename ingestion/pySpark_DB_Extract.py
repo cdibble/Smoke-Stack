@@ -1,19 +1,4 @@
 #!/usr/bin/env python3
-# PySpark Tutorial : https://realpython.com/pyspark-intro/
-# Access EC2 and Start Spark Cluster
-# SSH to EC2 and launch spark
-ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-229-205-147.us-west-2.compute.amazonaws.com # Spark Master
-sh /usr/local/spark/sbin/start-all.sh # re-run this after adding a new worker IP to the slaves file if scaling horizontally
-# /usr/local/spark/sbin/stop-all.sh # stop spark cluster
-
-# Start spark cluster manually
-# ec2/spark-ec2 --key-pair=courseexample --identity-file=courseexample.pem launch spark-cluster-example
-bash export AWS_SECRET_ACCESS_KEY=AaBbCcDdEeFGgHhIiJjKkLlMmNnOoPpQqRrSsTtU export AWS_ACCESS_KEY_ID=ABCDEFG1234567890123
-./spark-ec2 --key-pair=awskey --identity-file=awskey.pem --region=us-west-1 --zone=us-west-1a launch my-spark-cluster 
-
-# start pyspark with master node
-pyspark --master spark://10.0.0.7:7077
-http://ec2-44-229-205-147.us-west-2.compute.amazonaws.com:8080/ # only works if security group opens 8080 port to myIP
 # ===========================================================================
 # Python3 script
 # geospatial modules
