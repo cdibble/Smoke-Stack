@@ -1,13 +1,15 @@
 # ship-soot
 Building an Inventory of shipping emissions at ports
 
+<hr/>
+
 ![2016_USA_ShippingHeatmap](/img/Coast_Guard_Terrestrial_USEEZContinental_AllShips_2016_Heatmaps_PREVIEW.png)
+
+<hr/>
 
 ## Table of Contents
 1. [Overview](Readme.md$Overview)
 1. [Engineering Challenges](Readme.md$Engineering-Challenges)
-
-how to get the preview?
 
 ## Overview
 Global trade relies on the constant movement of goods by maritime shipping, but the vessels involved generate a great deal of pollution. In addition to carbon emissions, they produce sulphate and nitrate pollutants and particulate matter. This pollution is known to affect air quality in port regions and recent regulations on the fuels used by shipping vessels are aimed at reducing the negative impacts of pollution from ships while they are in ports.
