@@ -3,7 +3,8 @@
 # PySpark Tutorial : https://realpython.com/pyspark-intro/
 # Access EC2 and Start Spark Cluster
 # SSH to EC2 and launch spark
-ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-229-205-147.us-west-2.compute.amazonaws.com # Spark Master
+# ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-229-205-147.us-west-2.compute.amazonaws.com # Spark Master
+ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com
 sh /usr/local/spark/sbin/start-all.sh # re-run this after adding a new worker IP to the slaves file if scaling horizontally
 # /usr/local/spark/sbin/stop-all.sh # stop spark cluster
 ## RUN SPARK SUBMIT
@@ -13,7 +14,8 @@ scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/
 /usr/local/spark/bin/spark-submit --master spark://10.0.0.7:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar, /home/ubuntu/Scripts/pySpark_DB_Extract.py &> /usr/local/spark/logs/spark_run_log_`date '+%Y_%m_%d__%H_%M_%S'`_terminal
 	# --executor-memory 6g --total-executor-cores 7
 # SPARK GUI:  only works if security group opens 8080 port to myIP
-http://ec2-44-229-205-147.us-west-2.compute.amazonaws.com:8080/
+# http://ec2-44-229-205-147.us-west-2.compute.amazonaws.com:8080/
+http://ec2-44-232-197-79.us-west-2.compute.amazonaws.com:8080/
 # Spark Log Level
 sc.setLogLevel("ERROR") # Stop stream of warnings
 ## DEV / TEST

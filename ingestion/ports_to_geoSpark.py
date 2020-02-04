@@ -16,7 +16,9 @@ from shapely.ops import transform
 import geopyspark
 from geopandas import GeoDataFrame
 import pyproj
-## utility
+# import pyrasterframes
+# from pyrasterframes.utils import create_rf_spark_session
+# sparkaf = create_rf_spark_session()## utility
 # import json
 from functools import partial
 import datetime
@@ -30,6 +32,13 @@ sqlContext = SQLContext(sc)
 def get_meth(object):
 	object_methods = [method_name for method_name in dir(object) if callable(getattr(object, method_name))]
 	return object_methods
+
+def lonLatString_to_geoPoint(lon, lat):
+	points = Point(float(lon), float(lat)).wkt
+	return points
+# Register UDF
+lonLatString_to_geoPoint_udf = psql.udf(lonLatString_to_geoPoint)
+
 def geoPoint_buffer_to_polygon(point):
 	# this function owes a lot to 'bugmenot123': # https://gis.stackexchange.com/questions/268250/generating-polygon-representing-rough-100km-circle-around-latitude-longitude-poi/268277#268277
 	# needs to be able to take a list of points
@@ -65,16 +74,11 @@ def geoPoint_buffer_to_polygon(point):
 # Register UDF
 geoPoint_buffer_to_polygon_udf = psql.udf(geoPoint_buffer_to_polygon, StringType())
 
-def lonLatString_to_geoPoint(lon, lat):
-	points = Point(float(lon), float(lat)).wkt
-	return points
-# Register UDF
-lonLatString_to_geoPoint_udf = psql.udf(lonLatString_to_geoPoint)
 
 def write_df_to_parquet(spark, df_i):
 		# Write Parquet to S3 
 		target_bucket_dir = "s3a://major-us-ports-csv/"
-		target_file_name = 'geoPorts_v2.parquet'
+		target_file_name = 'geoPorts.parquet'
 		df_i.write.mode("append").format('parquet').option('compression', 'snappy').save(target_bucket_dir + target_file_name)
 ## Get Data -> Munge Spatial Points -> Add Polygon with Buffer 
 # client.download_file('BUCKET_NAME', 'OBJECT_NAME', 'FILE_NAME')
