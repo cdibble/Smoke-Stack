@@ -6,7 +6,8 @@
 ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com
 
 # Clone repo with template:
-git clone https://github.com/InsightDataScience/flask-sample-app
+# git clone https://github.com/InsightDataScience/flask-sample-app
+
 cd flask-sample-app
 python3 -m venv venv --without-pip # create python vitrual environment from wtihin flask-sample-app
 . venv/bin/activate # activate virtual environment
