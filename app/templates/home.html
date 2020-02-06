@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Smoke Stack</title>
+  </head>
+  <body>
+    {% extends "template.html" %}
+    {% block content %}
+
+    <h1> Query AIS Ship Data </h1>
+    <p> Query By Port. <span id="additional_text" style="display:none;"> Or maybe not!! </span> </p>
+    <button type="button" class="btn btn-primary" id="btn-hide-text">Hide Text</button>
+    <button type="button" class="btn btn-secondary" id="btn-show-text">Show Text</button>
+
+    <br>
+    <h1> Route examples </h1>
+    <textarea rows="4" cols="50" id="user_name"></textarea>
+    <button type="button" class="btn btn-primary" id="btn-show-route">Use Route</button>
+    {% endblock %}
+  </body>
+</html>
