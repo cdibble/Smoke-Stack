@@ -1,5 +1,5 @@
-# ship-soot
-Building an Inventory of shipping emissions at ports
+# Smoke Stack
+Estimate ship emissions inventories and air quality trends in ports to develop better environmental practices, reduce supply chain costs, and demonstrate successful sustainability initiatives.
 
 <hr/>
 
