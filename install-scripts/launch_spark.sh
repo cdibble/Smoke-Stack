@@ -15,6 +15,7 @@ scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/co
 scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.9:/usr/local/spark/conf/spark-env.sh
 scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.5:/usr/local/spark/conf/spark-env.sh
 scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.10:/usr/local/spark/conf/spark-env.sh
+scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.12:/usr/local/spark/conf/spark-env.sh
 
 ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-35-163-99-143.us-west-2.compute.amazonaws.com
 ## RUN SPARK SUBMIT

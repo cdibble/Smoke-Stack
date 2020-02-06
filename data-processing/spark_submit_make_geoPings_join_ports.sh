@@ -22,9 +22,18 @@ scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/
 # sh /usr/local/spark/sbin/start-all.sh # re-run this after adding a new worker IP to the slaves file if scaling horizontally
 # /usr/local/spark/sbin/stop-all.sh # stop spark cluster
 # submit job to spark cluster
-ln -s /tmp /newvolume/tmp # soft link new volume.
-/usr/local/spark/bin/spark-submit --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar, /home/ubuntu/Scripts/make_geoPings_join_ports.py &> /usr/local/spark/logs/spark_run_log_`date '+%Y_%m_%d__%H_%M_%S'`_terminal
+# ln -s /tmp /newvolume/tmp # soft link new volume.
+/usr/local/spark/bin/spark-submit --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar, /home/ubuntu/Scripts/make_geoPings_join_ports.py #&> /usr/local/spark/logs/spark_run_log_`date '+%Y_%m_%d__%H_%M_%S'`_terminal
 
+pyspark --master local[*] --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar
+
+# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar
+
+### Attempts to use 3rd party integrations:
+# Includes PyRasterFrames dependences:
+
+# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar,/usr/local/spark/jars/pyrasterframes_2.11-0.8.5.jar,/usr/local/spark/jars/sfcurve-zorder_2.11-0.2.0.jar \
+# 	--packages harsha2010:magellan:1.0.5-s_2.11,com.esri.geometry:esri-geometry-api:2.1.0,org.codehaus.jackson:jackson-core-asl:1.9.12
 # Pyspark Shell For Testing:
 # From PyRasterFrames documentation:
    # pyspark \
@@ -35,12 +44,6 @@ ln -s /tmp /newvolume/tmp # soft link new volume.
    #  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \ # these configs improve serialization performance \
    #  --conf spark.kryo.registrator=org.locationtech.rasterframes.util.RFKryoRegistrator \
    #  --conf spark.kryoserializer.buffer.max=500m
-# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar
-
-### Attempts to use 3rd party integrations:
-# Includes PyRasterFrames dependences:
-# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar,/usr/local/spark/jars/pyrasterframes_2.11-0.8.5.jar,/usr/local/spark/jars/sfcurve-zorder_2.11-0.2.0.jar \
-# 	--packages harsha2010:magellan:1.0.5-s_2.11,com.esri.geometry:esri-geometry-api:2.1.0,org.codehaus.jackson:jackson-core-asl:1.9.12
 
 # rasterframes dependencies:
 # org.locationtech.rasterframes:rasterframes_2.11:0.8.5,org.locationtech.rasterframes:rasterframes-datasource_2.11:0.8.5
