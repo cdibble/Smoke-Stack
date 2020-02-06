@@ -22,8 +22,8 @@ scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/
 # sh /usr/local/spark/sbin/start-all.sh # re-run this after adding a new worker IP to the slaves file if scaling horizontally
 # /usr/local/spark/sbin/stop-all.sh # stop spark cluster
 # submit job to spark cluster
-
-/usr/local/spark/bin/spark-submit --master spark://10.0.0.7:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar, /home/ubuntu/Scripts/make_geoPings_join_ports.py &> /usr/local/spark/logs/spark_run_log_`date '+%Y_%m_%d__%H_%M_%S'`_terminal
+ln -s /tmp /newvolume/tmp # soft link new volume.
+/usr/local/spark/bin/spark-submit --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar, /home/ubuntu/Scripts/make_geoPings_join_ports.py &> /usr/local/spark/logs/spark_run_log_`date '+%Y_%m_%d__%H_%M_%S'`_terminal
 
 # Pyspark Shell For Testing:
 # From PyRasterFrames documentation:
@@ -35,38 +35,39 @@ scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/
    #  --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \ # these configs improve serialization performance \
    #  --conf spark.kryo.registrator=org.locationtech.rasterframes.util.RFKryoRegistrator \
    #  --conf spark.kryoserializer.buffer.max=500m
-pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar
+# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar
 
+### Attempts to use 3rd party integrations:
 # Includes PyRasterFrames dependences:
-pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar,/usr/local/spark/jars/pyrasterframes_2.11-0.8.5.jar,/usr/local/spark/jars/sfcurve-zorder_2.11-0.2.0.jar \
-	--packages harsha2010:magellan:1.0.5-s_2.11,com.esri.geometry:esri-geometry-api:2.1.0,org.codehaus.jackson:jackson-core-asl:1.9.12
+# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar,/usr/local/spark/jars/pyrasterframes_2.11-0.8.5.jar,/usr/local/spark/jars/sfcurve-zorder_2.11-0.2.0.jar \
+# 	--packages harsha2010:magellan:1.0.5-s_2.11,com.esri.geometry:esri-geometry-api:2.1.0,org.codehaus.jackson:jackson-core-asl:1.9.12
 
 # rasterframes dependencies:
-org.locationtech.rasterframes:rasterframes_2.11:0.8.5,org.locationtech.rasterframes:rasterframes-datasource_2.11:0.8.5
+# org.locationtech.rasterframes:rasterframes_2.11:0.8.5,org.locationtech.rasterframes:rasterframes-datasource_2.11:0.8.5
 
 # GeoMesa
 # --conf/usr/local/spark/conf/spark-defaults-geoMesa.conf 
 # Start
-/usr/local/hadoop/sbin/start-dfs.sh
-/usr/local/hadoop/sbin/start-yarn.sh
-/usr/local/hbase/bin/start-hbase.sh
+# /usr/local/hadoop/sbin/start-dfs.sh
+# /usr/local/hadoop/sbin/start-yarn.sh
+# /usr/local/hbase/bin/start-hbase.sh
 # Stop
-/usr/local/hadoop/sbin/stop-dfs.sh
-/usr/local/hadoop/sbin/stop-yarn.sh
-/usr/local/hbase/bin/stop-hbase.sh
+# /usr/local/hadoop/sbin/stop-dfs.sh
+# /usr/local/hadoop/sbin/stop-yarn.sh
+# /usr/local/hbase/bin/stop-hbase.sh
 
 
-pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar,/usr/local/spark/jars/geomesa-feature-all_2.11-2.4.0.jar,/opt/geomesa/dist/spark/geomesa-hbase-spark-runtime_2.11-2.4.0.jar,/opt/geomesa/dist/spark/geomesa-hbase-spark_2.11-2.4.0.jar,/opt/geomesa/dist/hbase/geomesa-hbase-distributed-runtime_2.11-2.4.0.jar,/opt/geomesa/dist/converters/geomesa-tools_2.11-2.4.0-data.jar,GeoMesa_Config/jars/geomesa-gt-spark_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-spark-sql_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-feature-common_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-hbase-datastore_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-tools_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-filter_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-utils_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-spark-core_2.11-2.4.0.jar,/usr/local/spark/jars/geomesa-spark-jts_2.11-2.4.0.jar,/usr/local/hbase/conf/hbase-site.xml --conf spark.executor.extraClassPath=~/GeoMesa_Config/geomesa-base-on-s3.json
+# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar,/usr/local/spark/jars/geomesa-feature-all_2.11-2.4.0.jar,/opt/geomesa/dist/spark/geomesa-hbase-spark-runtime_2.11-2.4.0.jar,/opt/geomesa/dist/spark/geomesa-hbase-spark_2.11-2.4.0.jar,/opt/geomesa/dist/hbase/geomesa-hbase-distributed-runtime_2.11-2.4.0.jar,/opt/geomesa/dist/converters/geomesa-tools_2.11-2.4.0-data.jar,GeoMesa_Config/jars/geomesa-gt-spark_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-spark-sql_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-feature-common_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-hbase-datastore_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-tools_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-filter_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-utils_2.11-2.4.0.jar,GeoMesa_Config/jars/geomesa-spark-core_2.11-2.4.0.jar,/usr/local/spark/jars/geomesa-spark-jts_2.11-2.4.0.jar,/usr/local/hbase/conf/hbase-site.xml --conf spark.executor.extraClassPath=~/GeoMesa_Config/geomesa-base-on-s3.json
 # https://repo1.maven.org/maven2/org/locationtech/geomesa/geomesa-spark-jts_2.11/2.4.0/geomesa-spark-jts_2.11-2.4.0.jar
-,/usr/local/spark/jars/geomesa-fs-spark_2.11-2.4.0.jar
-,GeoMesa_Config/jars/geomesa-fs-storage-parquet_2.11-2.4.0.jar
-,GeoMesa_Config/jars/geomesa-accumulo-datastore_2.11-2.4.0.jar
+# ,/usr/local/spark/jars/geomesa-fs-spark_2.11-2.4.0.jar
+# ,GeoMesa_Config/jars/geomesa-fs-storage-parquet_2.11-2.4.0.jar
+# ,GeoMesa_Config/jars/geomesa-accumulo-datastore_2.11-2.4.0.jar
 # /opt/geomesa/dist/spark/geomesa-hbase-spark-runtime_2.11-2.4.0.jar
 # /opt/geomesa/dist/spark/geomesa-hbase-spark_2.11-2.4.0.jar
 # /opt/geomesa/dist/hbase/geomesa-hbase-distributed-runtime_2.11-2.4.0.jar
 # /opt/geomesa/dist/converters/geomesa-tools_2.11-2.4.0-data.jar
 
-import geomesa_pyspark as gs
+# import geomesa_pyspark as gs
 # conf = geomesa_pyspark.configure(
 #     jars=['/path/to/geomesa-accumulo-spark-runtime_2.11-$VERSION.jar'],
 #     packages=['geomesa_pyspark','pytz'],
@@ -90,6 +91,3 @@ import geomesa_pyspark as gs
 # 	]'
 
 # ~/GeoMesa_Config/geomesa-hbase-on-s3.json
-
-
-

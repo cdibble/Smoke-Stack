@@ -74,7 +74,7 @@ polygon_contains_point_udf = psql.udf(polygon_contains_point)
 def write_csv_to_parquet(spark, df_to_write):
 		# Write Parquet to S3 
 		target_bucket_dir = "s3a://ais-ship-pings-parquet/"
-		target_file_name = 'pings_with_visitIndex_portName.parquet'
+		target_file_name = 'allPings_with_visitIndex_portName.parquet'
 		df_to_write.write.mode("append").format('parquet').partitionBy('PORT_NAME').option('compression', 'snappy').save(target_bucket_dir + target_file_name)
 
 ## Script
@@ -84,7 +84,7 @@ source_file_name_ports = "geoPorts_v2.parquet"
 ports = sqlContext.read.parquet(source_bucket_dir_ports + source_file_name_ports) # Fastest by an order of mag
 
 source_bucket_dir_pings = "s3a://ais-ship-pings-parquet/"
-source_file_name_pings = "pings.parquet/Year=2017/Month=1"
+source_file_name_pings = "pings.parquet"
 pings = sqlContext.read.parquet(source_bucket_dir_pings + source_file_name_pings) # Fastest by an order of mag
 # pings.count() = 218,689,038  
 

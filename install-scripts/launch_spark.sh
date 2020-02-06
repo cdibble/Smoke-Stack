@@ -7,6 +7,16 @@
 ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com
 sh /usr/local/spark/sbin/start-all.sh # re-run this after adding a new worker IP to the slaves file if scaling horizontally
 # /usr/local/spark/sbin/stop-all.sh # stop spark cluster
+
+## Send /usr/local/spark/conf/spark-defaults.conf to worker nodes
+scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.4:/usr/local/spark/conf/spark-env.sh
+scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.6:/usr/local/spark/conf/spark-env.sh
+scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.11:/usr/local/spark/conf/spark-env.sh
+scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.9:/usr/local/spark/conf/spark-env.sh
+scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.5:/usr/local/spark/conf/spark-env.sh
+scp ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/usr/local/spark/conf/spark-env.sh 10.0.0.10:/usr/local/spark/conf/spark-env.sh
+
+ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-35-163-99-143.us-west-2.compute.amazonaws.com
 ## RUN SPARK SUBMIT
 # push script to master EC2
 scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/ship-soot/ingestion/pySpark_DB_Extract.py ubuntu@ec2-44-229-205-147.us-west-2.compute.amazonaws.com:/home/ubuntu/Scripts/
