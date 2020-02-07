@@ -15,7 +15,7 @@ sudo service postgresql stop
 
 # ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-35-160-239-28.us-west-2.compute.amazonaws.com
 pyspark --master local[*] --jars /usr/local/spark/jars/postgresql-42.2.9.jar,/usr/local/spark/jars/postgresql-9.1-901-1.jdbc4.jar,/usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar  \
-pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/postgresql-42.2.9.jar,/usr/local/spark/jars/postgresql-9.1-901-1.jdbc4.jar,/usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar  \
+# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/postgresql-42.2.9.jar,/usr/local/spark/jars/postgresql-9.1-901-1.jdbc4.jar,/usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar  \
 	
 # --config spark.local.dir=/database/raw_data job.local.dir=/database/raw_data/ 
 ### PYTHON3
@@ -36,10 +36,11 @@ pings = pings.select([columns for columns in pings.columns if columns not in dro
 # https://stackoverflow.com/questions/34948296/using-pyspark-to-connect-to-postgresql
 # this seems to work, but got 'oom'
 # can I loop through the partitions??
-mode = "overwrite" "append"
-url = "jdbc:postgresql://localhost:5432/pings_db"
-properties = {"user": "db_user","password": "look_at_data","driver": "org.postgresql.Driver"}
-pings.write.jdbc(url=url, table="pings", mode=mode, properties=properties)
+# mode = "overwrite" "append"
+# url = "jdbc:postgresql://localhost:5432/pings_db"
+# properties = {"user": "db_user","password": "look_at_data","driver": "org.postgresql.Driver"}
+# pings.write.jdbc(url=url, table="pings", mode=mode, properties=properties)
+
 ####### TEMPLATE FROM SARAH ####
 #   table0 = spark.read \
 #         .format("parqet") \
@@ -58,7 +59,7 @@ pings.write.jdbc(url=url, table="pings", mode=mode, properties=properties)
 # .option("lowerBound", 0).option("upperBound", rowNum) \
 # .option("numPartitions", numPartitions) \
 ####################################
-rowNum = pings.count()
+# rowNum = pings.count()
 pings = pings.repartition(200)
 saveMode="append"
 pings.write \
@@ -74,4 +75,4 @@ pings.write \
 # \l # lists databses available
 # \c <databse-name>; connect to named database
 # \d <databse-name>; see schema for named database
-SELECT "PORT_NAME" FROM PINGS_DB LIMIT 10 
+# SELECT "PORT_NAME" FROM PINGS_DB LIMIT 10 
