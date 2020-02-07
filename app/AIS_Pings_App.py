@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 # run app with self-call
-if __name__ = '__main__':
+if __name__ == '__main__':
     app.run()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost:5432/pings_db'
