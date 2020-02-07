@@ -3,27 +3,70 @@ import psycopg2
 # from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
-
 # run app with self-call
 # if __name__ == '__main__':
 
+def get_db():
+	connection = psycopg2.connect("dbname=pings_db_one_month user=db_user password=look_at_data host=44.232.197.79 port=5432")
+	return connection	
+
+def get_port_list():
+	con = get_db()
+	curs = con.cursor()
+	curs.execute('''SELECT DISTINCT "PORT_NAME" FROM ports_db''')
+	port_list = curs.fetchall()
+	port_list = [port[0] for port in port_list]
+	return port_list
+
+port_list = get_port_list()
+
+def get_port_coords(PORT_NAME):
+	print(PORT_NAME)
+	con = get_db()
+	curs = con.cursor()
+	curs.execute(''' SELECT "Y", "X" FROM ports_db WHERE "PORT_NAME" = '{}' '''.format(PORT_NAME))
+	coords = curs.fetchall()
+	lat , lon = coords[0][0], coords[0][1]
+	print([lat, lon])
+	return [lat, lon]
+
+# get_port_coords('Port Fourchon, LA')
+
 # Root path that returns home.html
 @app.route('/')
+@app.route('/home')
 def home():
-	return render_template("home.html")
+	# connection = psycopg2.connect("dbname=pings_db user=db_user password=look_at_data host=44.232.197.79 port=5432")
+	# cursor = connection.cursor()
+	# cursor.execute('''SELECT DISTINCT "PORT_NAME" FROM pings_db ''')
+	# port_list = cursor.fetchall()
+	return render_template("home.html", port_list = port_list)
 
-# @app.route('/')
-# def home():
-# 	return render_template("home.html")
+@app.route('/port_lat_lon', methods=['GET', 'POST'])
+def port_vessels():
+	if request.method == "POST":
+		port = request.form.get("port")
+		connection = get_db() #psycopg2.connect("dbname=pings_db user=db_user password=look_at_data host=44.232.197.79 port=5432")
+		cursor = connection.cursor()
+		print(str(port))
+		lat, lon = get_port_coords(port)
+		# cursor.execute('SELECT "VesselName" FROM pings_db WHERE "PORT_NAME"=%(port)s;', %port)
+	return render_template("home.html", port_list = port_list, port = port, lat = lat, lon = lon)
 
-# DATABASE_URI - open connection
-# db = psycopg2.connect("dbname=pings_db user=db_user password=look_at_data host=44.232.197.79 port=5432")
 
 # About page
-# @app.route('/about')
-# def about():
-# 	return render_template("about.html")
+@app.route('/about')
+def about():
+	return render_template("about.html")
 
+# @app.route('/port_index')
+# def port_index():
+# 	connection = psycopg2.connect("dbname=pings_db user=db_user password=look_at_data host=44.232.197.79 port=5432")
+# 	cursor = connection.cursor()
+# 	cursor.execute('''SELECT DISTINCT "PORT_NAME" FROM pings_db ''')
+# 	port_list = cursor.fetchall()
+# 	port_list = sorted(port_list)
+# 	return render_template("port_index.html", port_list=port_list)
 # # API 
 # @app.route('/portQuery/<PORT_NAME>')
 # def get_port(portName):
@@ -50,16 +93,7 @@ def home():
 # 	# show the subpath after /path/
 # 	return 'Subpath %s' % escape(subpath)
 
-
-###### Schema / Models
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date
-
-from flask_sqlalchemy import SQLAlchemy
-import datetime
-
-# db = SQLAlchemy()
-
+# Classes
 # class BaseModel(db.Model):
 #     """Base data model for all objects"""
 #     __abstract__ = True
@@ -91,77 +125,3 @@ import datetime
 #     id = db.Column(db.Integer, primary_key = True)
 #     lat = db.Column(db.Float)
 #     lng = db.Column(db.Float)
-
-
-
-
-# Base = declarative_base()
-# class Ping(Base):
-# 	__tablename__ = 'pings'    
-# 	MMSI = Column(String, primary_key = True)
-# 	BaseDateTime = Column(Date)
-# 	LAT = Column(String)
-# 	LON = Column(String)
-# 	SOG = Column(String)
-# 	COG = Column(String)
-# 	Heading = Column(String)
-# 	VesselName = Column(String)
-# 	VesselType = Column(String)
-# 	Status = Column(String)
-# 	Length = Column(String)
-# 	Width = Column(String)
-# 	Draft = Column(String)
-# 	Cargo = Column(String)
-# 	dt = Column(Integer)
-# 	subgroup = Column(Integer)
-# 	visit_index = Column(Date)
-# 	PORT_NAME = Column(String)
-# 	def __init__(self, name, author, published):
-# 		self.MMSI = MMSI
-# 		self.BaseDateTime = BaseDateTime
-# 		self.LAT = LAT
-# 		self.LON = LON
-# 		self.SOG = SOG
-# 		self.COG = COG
-# 		self.Heading = Heading
-# 		self.VesselName = VesselName
-# 		self.VesselType = VesselType
-# 		self.Status = Status
-# 		self.Length = Length
-# 		self.Width = Width
-# 		self.Draft = Draft
-# 		self.Cargo = Cargo
-# 		self.dt = dt
-# 		self.subgroup = subgroup
-# 		self.visit_index = visit_index
-# 		self.PORT_NAME = PORT_NAME
-
-# 	def __repr__(self):
-# 		return '<id {}>'.format(self.id)
-	
-# 	def serialize(self):
-# 		return {
-# 			'MMSI' : self.MMSI = MMSI
-# 			'BaseDateTime' : self.BaseDateTime
-# 			'LAT' : self.LAT
-# 			'LON' : self.LON
-# 			'SOG' : self.SOG
-# 			'COG' : self.COG
-# 			'Heading' : self.Heading
-# 			'VesselName' : self.VesselName
-# 			'VesselType' : self.VesselType
-# 			'Status' : self.Status
-# 			'Length' : self.Length
-# 			'Width' : self.Width
-# 			'Draft' : self.Draft
-# 			'Cargo' : self.Cargo
-# 			'dt' : self.dt
-# 			'subgroup' : self.subgroup
-# 			'visit_index' : self.visit_index
-# 			'PORT_NAME' : self.PORT_NAME
-# 		}
-
-# 	def __repr__(self):
-# 		return "<Ping(title='{}', author='{}', pages={}, published={})>"\
-# 				.format(self.title, self.author, self.pages, self.published)
-

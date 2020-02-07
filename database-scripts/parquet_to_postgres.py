@@ -3,11 +3,12 @@
 ## COMMAND LINE
 # create postgres db
 sudo -u postgres -i
-createdb pings_db -O postgres
+# createdb pings_db -O postgres # use different tablespace
 psql -l  | grep pings_db
 psql 
 CREATE USER db_user WITH PASSWORD 'look_at_data';
-GRANT ALL PRIVILEGES ON DATABASE pings_db TO db_user;
+CREATE DATABASE pings_2016_2017_db_test TABLESPACE pings_database;
+GRANT ALL PRIVILEGES ON DATABASE pings_db_2016_2017 TO db_user;
 
 # Start postgres server
 sudo service postgresql start
@@ -15,32 +16,29 @@ sudo service postgresql stop
 
 # ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-35-160-239-28.us-west-2.compute.amazonaws.com
 pyspark --master local[*] --jars /usr/local/spark/jars/postgresql-42.2.9.jar,/usr/local/spark/jars/postgresql-9.1-901-1.jdbc4.jar,/usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar  \
-# pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/postgresql-42.2.9.jar,/usr/local/spark/jars/postgresql-9.1-901-1.jdbc4.jar,/usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar  \
+pyspark --master spark://10.0.0.14:7077 --jars /usr/local/spark/jars/postgresql-42.2.9.jar,/usr/local/spark/jars/postgresql-9.1-901-1.jdbc4.jar,/usr/local/spark/jars/aws-java-sdk-1.7.4.jar,/usr/local/spark/jars/hadoop-aws-2.7.1.jar  \
 	
 # --config spark.local.dir=/database/raw_data job.local.dir=/database/raw_data/ 
 ### PYTHON3
 import boto3
-source_bucket_dir_ports = "s3a://ais-ship-pings-parquet/"
-source_file_name_ports = "pings_with_visitIndex_portName.parquet"
-pings = sqlContext.read.parquet(source_bucket_dir_ports + source_file_name_ports) # Fastest by an order of mag
+conf = SparkConf().setAppName("Migrate_to_PostgreSQL_Database") #.setMaster(spark://10.0.0.7:7077)
+source_bucket_dir_pings = "s3a://ais-ship-pings-parquet/"
+source_file_name_pings = "pings_with_visitIndex_portName.parquet" # one month of data (Jan. 2017)
+# source_file_name_pings = "allPings_with_visitIndex_portName.parquet" # two years of data (2016-2017)
+pings = sqlContext.read.parquet(source_bucket_dir_pings + source_file_name_pings) # Fastest by an order of mag
 # get rid of columns not needed for Postgres
 drop_cols = {"IMO", "CallSign", "GRID_X", "GRID_Y", "LON_CELL", "LAT_CELL", "LON_LAT", "inPortTrue", "indicator"}
 pings = pings.select([columns for columns in pings.columns if columns not in drop_cols])
 
+
+
+source_bucket_dir_ports = "s3a://major-us-ports-csv/"
+source_file_name_ports = "geoPorts_v2.parquet"
+ports = sqlContext.read.parquet(source_bucket_dir_ports + source_file_name_ports) # Fastest by an order of mag
+
 # compute cumulative time per visit?
 
 #### Send to Postgres Database
-
-# pings.toPandas().to_csv('file:///database/raw_data/pings.csv')
-
-# https://stackoverflow.com/questions/34948296/using-pyspark-to-connect-to-postgresql
-# this seems to work, but got 'oom'
-# can I loop through the partitions??
-# mode = "overwrite" "append"
-# url = "jdbc:postgresql://localhost:5432/pings_db"
-# properties = {"user": "db_user","password": "look_at_data","driver": "org.postgresql.Driver"}
-# pings.write.jdbc(url=url, table="pings", mode=mode, properties=properties)
-
 ####### TEMPLATE FROM SARAH ####
 #   table0 = spark.read \
 #         .format("parqet") \
@@ -60,16 +58,32 @@ pings = pings.select([columns for columns in pings.columns if columns not in dro
 # .option("numPartitions", numPartitions) \
 ####################################
 # rowNum = pings.count()
-pings = pings.repartition(200)
+# Write PINGS
+pings = pings.repartition(100)
 saveMode="append"
 pings.write \
 .format("jdbc") \
 .option("driver", "org.postgresql.Driver") \
 .option("dbtable", "pings_db") \
-.option("url", 'jdbc:postgresql://10.0.0.14:5432/pings_db') \
+.option("url", 'jdbc:postgresql://10.0.0.14:5432/pings_db_one_month') \
 .option("user", "db_user") \
 .option("password", "look_at_data") \
 .save(mode=saveMode)
+
+
+# Write PORTS
+ports = ports.repartition(10)
+saveMode="append"
+ports.write \
+.format("jdbc") \
+.option("driver", "org.postgresql.Driver") \
+.option("dbtable", "ports_db") \
+.option("url", 'jdbc:postgresql://10.0.0.14:5432/pings_db_one_month') \
+.option("user", "db_user") \
+.option("password", "look_at_data") \
+.save(mode=saveMode)
+
+
 
 # from within postgres:
 # \l # lists databses available

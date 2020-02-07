@@ -24,7 +24,7 @@ pip3 install flask_migrate
 export FLASK_APP=hello.py # export FLASK_APP variable
 flask run --host=0.0.0.0 # launch FLASK App
 
-http://ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000
+# http://ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000
 
 ## example 2
 export FLASK_APP=routes.py
@@ -39,6 +39,9 @@ python3 -m venv venv #--without-pip
 . venv/bin/activate
 git clone https://github.com/cdibble/Smoke-Stack
 scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/Smoke-Stack/app/AIS_Pings_App.py ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com:/home/ubuntu/Smoke-Stack/app/
+scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/Smoke-Stack/app/templates/port_index.html ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com:/home/ubuntu/Smoke-Stack/app/templates/
+scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/Smoke-Stack/app/templates/home.html ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com:/home/ubuntu/Smoke-Stack/app/templates/
+scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/Smoke-Stack/app/templates/template.html ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com:/home/ubuntu/Smoke-Stack/app/templates/
 # python3 manage.py db init
 # python3 manage.py db migrate
 
