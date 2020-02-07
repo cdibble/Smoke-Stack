@@ -7,10 +7,11 @@ ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-231-212-226.us-west-2.compu
 
 # Clone repo with template:
 # git clone https://github.com/InsightDataScience/flask-sample-app
+. venv/bin/activate # activate python virtual environment
 git clone https://github.com/cdibble/Smoke-Stack
 cd flask-sample-app
+sudo apt-get install python3-venv
 python3 -m venv venv --without-pip # create python vitrual environment from wtihin flask-sample-app
-. venv/bin/activate # activate virtual environment
 
 pip3 install Flask # install Flask in virtual env.
 sudo apt install python3-flask
@@ -34,11 +35,15 @@ nohup flask run --host=0.0.0.0 --port=80 &
 
 ####### Run Smoke-Stack App #######
 # See tutorial: https://flask.palletsprojects.com/en/1.1.x/tutorial/database/
+python3 -m venv venv #--without-pip 
+. venv/bin/activate
 git clone https://github.com/cdibble/Smoke-Stack
-python3 manage.py db init
-export FLASK_APP=app
-export FLASK_ENV=development
-export APP_SETTINGS="config.DevelopmentConfig"
-export DATABASE_URL="postgresql://10.0.0.14:5432/pings_db"
-flask run
+scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/Smoke-Stack/app/AIS_Pings_App.py ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com:/home/ubuntu/Smoke-Stack/app/
+# python3 manage.py db init
+# python3 manage.py db migrate
 
+export FLASK_APP=AIS_Pings_App
+# export FLASK_ENV=development
+# export APP_SETTINGS="config.DevelopmentConfig"
+# export DATABASE_URL="postgresql://10.0.0.14:5432/pings_db"
+flask run --host=0.0.0.0
