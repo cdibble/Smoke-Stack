@@ -85,7 +85,7 @@ source_file_name_ports = "geoPorts_v2.parquet"
 ports = sqlContext.read.parquet(source_bucket_dir_ports + source_file_name_ports) # Fastest by an order of mag
 
 source_bucket_dir_pings = "s3a://ais-ship-pings-parquet/"
-source_file_name_pings = "pings.parquet/Year=2016"
+source_file_name_pings = "pings.parquet/Year=2015"
 pings = sqlContext.read.parquet(source_bucket_dir_pings + source_file_name_pings) # Fastest by an order of mag
 # pings.count() = 218,689,038  
 

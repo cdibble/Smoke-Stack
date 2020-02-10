@@ -1,5 +1,9 @@
 from flask import Flask, escape, render_template, request
 import psycopg2
+import matplotlib.pyplot as plt
+import io
+import base64
+from urllib.parse import quote
 # from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
@@ -32,14 +36,31 @@ def get_port_coords(PORT_NAME):
 
 # get_port_coords('Port Fourchon, LA')
 
+def aggregate_by_port_ships_per_date(PORT_NAME):
+	# Note create index for PORT_NAME to speed up quieries
+	con = get_db()
+	curs = con.cursor()
+	# v1 Extract day from datetime, count distinct vessels per day at a port
+	# curs.execute(''' SELECT EXTRACT(Day FROM "BaseDateTime") , count(DISTINCT "VesselName") FROM pings_db WHERE "PORT_NAME" = '{}' GROUP BY 1 '''.format(PORT_NAME))
+	# curs.execute(''' SELECT DATE("BaseDateTime") , count(DISTINCT "MMSI") FROM pings_db WHERE "PORT_NAME" = '{}' GROUP BY 1 '''.format(PORT_NAME))
+	# daily_ships_in_port = curs.fetchall()
+	# v2 Extract day from datetime, count distinct vessels per day at a port
+	# curs.execute(''' SELECT EXTRACT(Day FROM "BaseDateTime") , count(DISTINCT "VesselName") FROM pings_db WHERE "PORT_NAME" = '{}' GROUP BY 1 '''.format(PORT_NAME))
+	curs.execute(''' SELECT "date", "count" FROM daily_ships_table WHERE "PORT_NAME" = '{}' '''.format(PORT_NAME))
+	daily_ships_in_port = curs.fetchall()
+	return daily_ships_in_port
+# aggregate_by_port_ships_per_date('San Francisco, CA')
+# aggregate_by_port_ships_per_date('Port Fourchon, LA')
+
+	# curs.execute(''' SELECT EXTRACT(Day FROM "BaseDateTime") , count(DISTINCT "VesselName") FROM pings_db WHERE "PORT_NAME" = 'San Francisco, CA' GROUP BY 1 '''.format(PORT_NAME))
+	# curs.execute(''' SELECT DISTINCT "VesselName" FROM pings_db WHERE "PORT_NAME" = 'Oakland, CA' ''')
+	# curs.execute(''' SELECT DISTINCT "PORT_NAME" FROM pings_db ''')
+
+### --------- ROUTES --------------- ###
 # Root path that returns home.html
 @app.route('/')
 @app.route('/home')
 def home():
-	# connection = psycopg2.connect("dbname=pings_db user=db_user password=look_at_data host=44.232.197.79 port=5432")
-	# cursor = connection.cursor()
-	# cursor.execute('''SELECT DISTINCT "PORT_NAME" FROM pings_db ''')
-	# port_list = cursor.fetchall()
 	return render_template("home.html", port_list = port_list)
 
 @app.route('/port_lat_lon', methods=['GET', 'POST'])
@@ -50,8 +71,43 @@ def port_vessels():
 		cursor = connection.cursor()
 		print(str(port))
 		lat, lon = get_port_coords(port)
+		plot_url = plot_daily_ships_in_port(port)
 		# cursor.execute('SELECT "VesselName" FROM pings_db WHERE "PORT_NAME"=%(port)s;', %port)
-	return render_template("home.html", port_list = port_list, port = port, lat = lat, lon = lon)
+	return render_template("home.html", port_list = port_list, port = port, lat = lat, lon = lon, plot_url = plot_url)
+
+# @app.route('/build_plot')
+def plot_daily_ships_in_port(PORT_NAME):
+	daily_ships = aggregate_by_port_ships_per_date(PORT_NAME)
+	# daily_ships = daily_ships_in_port
+	days = [daily_ships[x][0] for x in range(len(daily_ships)) ]
+	ships = [daily_ships[x][1] for x in range(len(daily_ships)) ]
+	print(days)
+	print(ships)
+	# ship_plot = plt.plot(days, ships)
+	ship_plot, ax = plt.subplots()
+	ax.plot(days, ships)
+	ax.set(xlabel='time (days)', ylabel='number of ships', title='Ship Visits At Selected Port')
+	ax.grid()
+	# Encode image:
+	plot_img = io.BytesIO()
+	ship_plot.savefig(plot_img , format = 'png')
+	# ship_plot.savefig('plot1.png'), format='png')
+	plot_img.seek(0)
+	plot_url = base64.b64encode(plot_img.getvalue()).decode()
+	# return plot_url
+	# return '<img src="data:image/png;base64,{}"alt="plot_img"/>'.format(quote(plot_url))
+	return "data:image/png;base64,{}".format(quote(plot_url))
+	 
+# plot_daily_ships_in_port('Port Fourchon, LA')
+	# fig = Figure()
+	# axis = fig.add_subplot(1, 1, 1)
+	# axis.plot(days, ships)
+	# canvas = FigureCanvas(fig)
+	# output = StringIO.StringIO()
+	# canvas.print_png(output)
+	# response = make_response(output.getvalue())
+	# response.mimetype = 'image/png'
+	# return response
 
 
 # About page

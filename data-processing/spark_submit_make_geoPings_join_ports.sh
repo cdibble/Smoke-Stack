@@ -16,8 +16,8 @@
 # PREREQUISITE: From local machine, push code to Master
 # ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-229-205-147.us-west-2.compute.amazonaws.com # Spark Master
 ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com
-scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/ship-soot/data-processing/make_geoPings_join_ports.py ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/home/ubuntu/Scripts/
-# scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/ship-soot/ingestion/spark_submit_ports_geoParquet.sh ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/home/ubuntu/Scripts/
+scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/Smoke-Stack/data-processing/make_geoPings_join_ports.py ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/home/ubuntu/Scripts/
+# scp -i "Connor-Dibble-IAM-keypair.pem" /Users/Connor/Documents/Graduate\ School/Dibble_Research/Github_repos/Smoke-Stack/ingestion/spark_submit_ports_geoParquet.sh ubuntu@ec2-44-232-197-79.us-west-2.compute.amazonaws.com:/home/ubuntu/Scripts/
 # From master machine, start cluster
 # sh /usr/local/spark/sbin/start-all.sh # re-run this after adding a new worker IP to the slaves file if scaling horizontally
 # /usr/local/spark/sbin/stop-all.sh # stop spark cluster

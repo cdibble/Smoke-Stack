@@ -9,6 +9,7 @@
   <body>
     {% extends "template.html" %}
     {% block content %}
+    <center>
     <h1> Select A Port </h1>
       <form id="form1" action="/port_lat_lon" method="POST">
         <select id = "port", name = "port">
@@ -24,7 +25,7 @@
           You have selected: {{ port }}
           <!-- With lat: {{lat}} and lon: {{lon}} -->
       {% endif %}
-    <div id="map" style="height: 400px;width: 600"></div>
+    <div id="map" style="height: 500px;width: 500px"></div>
     <script type="text/javascript">
       // The first parameter are the coordinates of the center of the map
       // The second parameter is the zoom level
@@ -38,13 +39,25 @@
         });
       // Now add the layer onto the map
       map.addLayer(layer);
+      {% for port in port_list %}
+        var marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong>{{ port }}</strong>").openPopup();
+      {% endfor %}
       var marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong>{{ port }}</strong>").openPopup();
     </script>
 
-    <div id="plot_ships" style="height: 400px;width: 400"></div>
-    <script type="text/javascript">
+    <!-- <div id="plot_ships" style="height: 400px;width: 400px"></div> -->
+    <article id = 'plot1'>
+      <!-- <p>{{plot_url}}</p> -->
+      <img src = {{plot_url}} alt = "plot1" style="width:700px; height:600px" >
+
+    </article>
+  </center>
+    <!-- <script type="text/javascript">
+      // plot
+      // print({{plot_url}})
+      // <img src="data:image/png;base64, {{ plot_url }}" alt = "Port_Ships_Per_Day" >
       
-    </script>
+    </script> -->
 <!--     <h1> Use Javascript/Bootstrap buttons </h1>
     <p> Flask is Fun. <span id="additional_text" style="display:none;"> Or maybe not!! </span> </p>
     <button type="button" class="btn btn-primary" id="btn-hide-text">Hide Text</button>

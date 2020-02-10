@@ -11,27 +11,25 @@ ssh -i "Connor-Dibble-IAM-keypair.pem" ubuntu@ec2-44-231-212-226.us-west-2.compu
 git clone https://github.com/cdibble/Smoke-Stack
 cd flask-sample-app
 sudo apt-get install python3-venv
-python3 -m venv venv --without-pip # create python vitrual environment from wtihin flask-sample-app
+python3 -m venv venv #--without-pip # create python vitrual environment from wtihin flask-sample-app
 
-pip3 install Flask # install Flask in virtual env.
+# pip3 install Flask # install Flask in virtual env.
 sudo apt install python3-flask
 sudo apt-get install libpq-dev
-pip3 install psycopg2
-pip3 install flask_sqlalchemy
-pip3 install flask_script
-pip3 install flask_migrate
+# pip3 install psycopg2
+# pip3 install flask_sqlalchemy
+# pip3 install flask_script
+# pip3 install flask_migrate
+cd ~/Smoke-Stack/app # use the following to ensure install in virtual env.
+./venv/bin/python3 -m pip install matplotlib
+./venv/bin/python3 -m pip install Flask
+./venv/bin/python3 -m pip install psycopg2
+
 
 export FLASK_APP=hello.py # export FLASK_APP variable
 flask run --host=0.0.0.0 # launch FLASK App
 
 # http://ubuntu@ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000
-
-## example 2
-export FLASK_APP=routes.py
-
-## Run on port 80
-export FLASK_APP=routes_port80.py
-nohup flask run --host=0.0.0.0 --port=80 & 
 
 ####### Run Smoke-Stack App #######
 # See tutorial: https://flask.palletsprojects.com/en/1.1.x/tutorial/database/
