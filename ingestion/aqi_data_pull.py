@@ -18,14 +18,20 @@
 
 # Get information about AQI Monitoring Locations using a lat/lon bounding box:
 https://aqs.epa.gov/data/api/monitors/byBox?email=cddibble@gmail.com&key=silverhawk46&param=44201&bdate=19950101&edate=19951231&minlat=33.3&maxlat=33.6&minlon=-87.0&maxlon=-86.7
-
+https://aqs.epa.gov/data/api/sampleData/byBox?email=cddibble@gmail.com&key=silverhawk46&param=44201&bdate=20150501&edate=20150502&minlat=33.3&maxlat=33.6&minlon=-87.0&maxlon=-86.7
 # Get AQI Sample Data By lat/long bounding box
 # Up to 5 param args may be given, separated by commas
 import requests
 def get_aqi(year, minlat, maxlat, minlon, maxlon): # pulls a full year of data for a location.
-	request_string = (f"https://aqs.epa.gov/data/api/sampleData/byBox?email=cddibble@gmail.com&key=silverhawk46&param=42101,42401,42602,81102,88101&bdate={year}0101&edate={year}1231&minlat={minlat}&maxlat={maxlat}&minlon={minlon}&maxlon={maxlon}'")
+	# request_string = (f"https://aqs.epa.gov/data/api/sampleData/byBox?email=cddibble@gmail.com&key=silverhawk46&param=42101,42401,42602,81102,88101&bdate={year}0101&edate={year}1231&minlat={minlat}&maxlat={maxlat}&minlon={minlon}&maxlon={maxlon}")
+	request_string = (f"https://aqs.epa.gov/data/api/sampleData/byBox?email=cddibble@gmail.com&key=silverhawk46&param=42101&bdate={year}0101&edate={year}1231&minlat={minlat}&maxlat={maxlat}&minlon={minlon}&maxlon={maxlon}")
+	# request_string =   "https://aqs.epa.gov/data/api/sampleData/byBox?email=cddibble@gmail.com&key=silverhawk46&param=44201&bdate=20150501&edate=20150502&minlat=33.3&maxlat=33.6&minlon=-87.0&maxlon=-86.7"
+	print(request_string)
 	aqi_pull = requests.get(request_string)
 	return(aqi_pull)
+
+xx = get_aqi(2015, 32.0 ,32.4, -123.0, -122.0)
+xx = get_aqi(2017, 32.3 ,33, -123, -119)
 
 # Get ports
 source_bucket_dir_ports = "s3a://major-us-ports-csv/"

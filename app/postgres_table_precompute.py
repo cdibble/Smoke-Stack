@@ -7,17 +7,19 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from urllib.parse import quote
-
 ####
 def get_db():
-	connection = psycopg2.connect("dbname=pings_db_one_month user=db_user password=look_at_data host=44.232.197.79 port=5432")
+	# Database for testing is : pings_db_one_month
+	# connection = psycopg2.connect("dbname=pings_db_one_month user=db_user password=look_at_data host=44.232.197.79 port=5432")
+	# Database for production is : pings_2015_to_2017
+	connection = psycopg2.connect("dbname=pings_2015_to_2017 user=db_user password=look_at_data host=44.232.197.79 port=5432")
 	return connection	
 
 #### 0.0 : Add categorical VesselType to pings_db
 con.close()
 con = get_db()
 curs = con.cursor()
-curs.execute('DROP TABLE pings_db_withVC') # drop if exists
+# curs.execute('DROP TABLE pings_db_withVC') # drop if exists
 curs.execute(''' CREATE TABLE pings_db_withVC AS SELECT *,
 	CASE WHEN "VesselType"::int IN (30) THEN 'Fishing'
 	WHEN "VesselType"::int IN (21, 22, 21, 32, 52) THEN 'Tug'
@@ -34,7 +36,7 @@ con.commit()
 con.close()
 con = get_db()
 curs = con.cursor()
-curs.execute('DROP TABLE unique_vessel_names') # drop if exists
+# curs.execute('DROP TABLE unique_vessel_names') # drop if exists
 curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT "VesselName", count(DISTINCT "VesselName") from pings_db group by "VesselName" ''')
 # curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT DISTINCT "VesselName" FROM pings_db ''')
 con.commit()
@@ -45,7 +47,7 @@ con.commit()
 con = get_db()
 curs = con.cursor()
 #### *** move to postgresql file :: pre-compute this table for faster queries.
-curs.execute(" DROP TABLE daily_ships_table ") # drop if exists
+# curs.execute(" DROP TABLE daily_ships_table ") # drop if exists
 curs.execute('''CREATE TABLE daily_ships_table AS SELECT DATE("BaseDateTime") , "PORT_NAME", "VesselCategory", count(DISTINCT "MMSI") FROM pings_db_withVC GROUP BY 1 , 2 , 3''')
 con.commit()
 ####
@@ -56,7 +58,7 @@ con.commit()
 con = get_db()
 curs = con.cursor()
 #### *** move to postgresql file :: pre-compute this table for faster queries.
-curs.execute(" DROP TABLE ships_per_port_table ") # drop if exists
+# curs.execute(" DROP TABLE ships_per_port_table ") # drop if exists
 curs.execute('''CREATE TABLE ships_per_port_table AS SELECT "VesselName", "PORT_NAME", count(DISTINCT "subgroup") FROM pings_db_withVC GROUP BY 1 , 2 ''')
 con.commit()
 ####
@@ -66,7 +68,7 @@ con.commit()
 con = get_db()
 curs = con.cursor()
 #### *** move to postgresql file :: pre-compute this table for faster queries.
-curs.execute(" DROP TABLE ship_visit_time ") # drop if exists
+# curs.execute(" DROP TABLE ship_visit_time ") # drop if exists
 curs.execute('''CREATE TABLE ship_visit_time AS
 	SELECT "VesselName", "PORT_NAME", "subgroup", "VesselCategory", "Length", "Width", "Draft",
 	MIN("BaseDateTime") as "Entry_Time",
@@ -80,7 +82,7 @@ con.commit()
 con = get_db()
 curs = con.cursor()
 #### *** move to postgresql file :: pre-compute this table for faster queries.
-curs.execute(" DROP TABLE ship_visit_total_time ") # drop if exists
+# curs.execute(" DROP TABLE ship_visit_total_time ") # drop if exists
 curs.execute('''CREATE TABLE ship_visit_total_time AS
 	SELECT "VesselName", "PORT_NAME", "VesselCategory",
 	"Length", "Width", "Draft", SUM("Visit_Time") AS "Total_Visit_Time"
@@ -94,7 +96,7 @@ con.commit()
 con = get_db()
 curs = con.cursor()
 #### *** move to postgresql file :: pre-compute this table for faster queries.
-curs.execute(" DROP TABLE ship_visit_quarterly ") # drop if exists
+# curs.execute(" DROP TABLE ship_visit_quarterly ") # drop if exists
 curs.execute('''CREATE TABLE ship_visit_quarterly AS
 	SELECT "PORT_NAME", "VesselCategory",
 	(EXTRACT(YEAR FROM "Entry_Time")+1) - (-0.25*EXTRACT(QUARTER FROM "Entry_Time") + 1.25) as "Quarter",
