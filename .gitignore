@@ -1,4 +1,6 @@
 # Repo files
+install-scripts/postgres_setup.sh
+install-scripts/PostgreSQL_PostGIS_DB_Setup.sh
 aws_setup.sh
 linux_ops.sh
 data_dl_to_ec2_xfer_to_s3.sh

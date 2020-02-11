@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Smoke Stack</title>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+  </head>
+  <body>
+    {% extends "template.html" %}
+    {% block content %}
+    <center>
+    <!--
+    <h1> Select A Port </h1>
+      <form id="form1" action="/port_lat_lon" method="POST">
+        <select id = "port", name = "port">
+          {% for port in port_list %}
+          <option value= "{{port}}" SELECTED = "selected">{{port}}</option>"
+          {% endfor %} 
+        </select>
+        <input type="submit" value="Submit">
+      </form>
+    <p>When you select a port, you will recieve view options.</p>
+    <div id="result">
+      {% if port is defined %}
+          You have selected: {{ port }}
+      {% endif %}
+    -->
+    <!-- <div id="map" style="height: 400px;width: 600px"></div>
+    <script type="text/javascript">
+      // The first parameter are the coordinates of the center of the map
+      // The second parameter is the zoom level
+      var map = L.map('map').setView([40, -100], 3);
+      // {s}, {z}, {x} and {y} are placeholders for map tiles
+      // {x} and {y} are the x/y of where you are on the map
+      // {z} is the zoom level
+      // {s} is the subdomain of cartodb
+        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+        });
+      // Now add the layer onto the map
+      map.addLayer(layer);
+      {% for port in port_list %}
+        var marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong>{{ port }}</strong>").openPopup();
+      {% endfor %}
+      var marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong>{{ port }}</strong>").openPopup();
+    </script> -->
+
+    <!-- <article id = 'plot1'>
+      <img src = {{plot_url}} alt = "plot1" style="width:700px; height:600px" >
+    </article> -->
+
+    <h1> Select A Ship </h1>
+      <form id="form1" action="/ship_compute" method="POST">
+        <select id = "ship", name = "ship">
+          <option value= {{ship}} selected = "selected">{{ship}}</option>
+          {% for ship in ship_list %}
+          <!-- <option value= {{ship}} selected = "selected">{{ship}}</option> -->
+          <option value= {{ship}}>{{ship}}</option>
+          {% endfor %} 
+        </select>
+        <input type="submit" value="Submit">
+      </form>
+
+    <article id = 'plot2'>
+      <img src = {{plot_url}} alt = "plot2" style="width:700px; height:500px" >
+    </article>
+    
+    <div class = "hbar"> </div>
+
+    <article id = 'plot3'>
+      <img src = {{ship_plot_total_time}} alt = "plot3" style="width:700px; height:500px" >
+    </article>
+
+    <div class = "hbar"> </div>
+
+  </center>
+
+<!--     <h1> Use Javascript/Bootstrap buttons </h1>
+    <p> Flask is Fun. <span id="additional_text" style="display:none;"> Or maybe not!! </span> </p>
+    <button type="button" class="btn btn-primary" id="btn-hide-text">Hide Text</button>
+    <button type="button" class="btn btn-secondary" id="btn-show-text">Show Text</button>
+
+    <br>
+    <h1> Route examples </h1>
+    <textarea rows="4" cols="50" id="user_name"></textarea>
+    <button type="button" class="btn btn-primary" id="btn-show-route">Use Route</button>
+ -->    {% endblock %}
+  </body>
+</html>
+
+
