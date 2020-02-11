@@ -13,8 +13,9 @@
     <h1> Select A Port </h1>
       <form id="form1" action="/port_lat_lon" method="POST">
         <select id = "port", name = "port">
+          <option value= "{{port}}" selected = "selected">{{port}}</option>
           {% for port in port_list %}
-          <option value= "{{port}}" SELECTED = "selected">{{port}}</option>"
+          <option value= "{{port}}">{{port}}</option>
           {% endfor %} 
         </select>
         <input type="submit" value="Submit">
@@ -25,39 +26,50 @@
           You have selected: {{ port }}
           <!-- With lat: {{lat}} and lon: {{lon}} -->
       {% endif %}
-    <div id="map" style="height: 500px;width: 500px"></div>
+    
+    <div id="map" class="leaflet-map" style="height: 400px;width: 600px"></div>
     <script type="text/javascript">
       // The first parameter are the coordinates of the center of the map
       // The second parameter is the zoom level
-      var map = L.map('map').setView([40, -100], 3);
+      var map = L.map('map').setView([40, -110], 2);
       // {s}, {z}, {x} and {y} are placeholders for map tiles
       // {x} and {y} are the x/y of where you are on the map
       // {z} is the zoom level
       // {s} is the subdomain of cartodb
-        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-        });
+      });
       // Now add the layer onto the map
       map.addLayer(layer);
-      {% for port in port_list %}
-        var marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong>{{ port }}</strong>").openPopup();
+      var customOptions =
+      {
+      // 'maxWidth': '400',
+      // 'width': '200',
+
+      'className' : 'popupCustom'
+      }
+      {% for _, row in port_df.iterrows() %}
+        var marker1 = L.marker([ {{ row["LAT"] }} , {{ row["LON"] }} ], {opacity : 0.9}).addTo(map).bindPopup("<strong ><div style='color: white'>{{ row["PORT_NAME"] }}</div></strong>").openPopup();
       {% endfor %}
-      var marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong>{{ port }}</strong>").openPopup();
+
+      var marker2 = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong><div style='color: white'>{{ port }}</div></strong>").setLatLng(e.latlng).openPopup();
+      // marker2.on('click', e => {})
+      
     </script>
 
-    <!-- <div id="plot_ships" style="height: 400px;width: 400px"></div> -->
     <article id = 'plot1'>
-      <!-- <p>{{plot_url}}</p> -->
       <img src = {{plot_url}} alt = "plot1" style="width:700px; height:600px" >
-
     </article>
+
+    <div id = 'makeroom'> </div>
+
+    <article id = 'plot1'>
+      <img src = {{total_ship_time_plot_url}} alt = "plot1" style="width:700px; height:600px" >
+    </article>    
+
+    <div id = 'makeroom'> </div>
   </center>
-    <!-- <script type="text/javascript">
-      // plot
-      // print({{plot_url}})
-      // <img src="data:image/png;base64, {{ plot_url }}" alt = "Port_Ships_Per_Day" >
-      
-    </script> -->
+
 <!--     <h1> Use Javascript/Bootstrap buttons </h1>
     <p> Flask is Fun. <span id="additional_text" style="display:none;"> Or maybe not!! </span> </p>
     <button type="button" class="btn btn-primary" id="btn-hide-text">Hide Text</button>

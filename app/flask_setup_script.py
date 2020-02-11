@@ -24,6 +24,8 @@ cd ~/Smoke-Stack/app # use the following to ensure install in virtual env.
 ./venv/bin/python3 -m pip install matplotlib
 ./venv/bin/python3 -m pip install Flask
 ./venv/bin/python3 -m pip install psycopg2
+./venv/bin/python3 -m pip install seaborn
+./venv/bin/python3 -m pip install pandas
 
 
 export FLASK_APP=hello.py # export FLASK_APP variable
