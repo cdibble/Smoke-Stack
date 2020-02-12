@@ -28,7 +28,40 @@ Users can view records in two ways: "Select Port" or "Select Ship". For each, a 
 
 "Select Port" will display a map with the port location and two plots. The first displays the number of ships in that port each day. The second diplays the total visit time in days for different vessel categories for each quarter-year (Cargo, Tanker, Passenger, Fishing, Pleasure, Other).
 
-"Select Ship" displays two plots for the selected vessel. The first shows the total number of visits the ship has made to each of the ports that it has visited within the time frame of the database.
+"Select Ship" displays two plots for the selected vessel. The first shows the total number of visits the ship has made to each of the ports that it has visited. The second shows the cumulative visit time in days that the ship has spent at various ports.
+
+Coming features: Concurrent air quality trends, regression with air quality and visit time scaled by ship tonnage, emissions estimates based on visit time and ship tonnage. See "Coming Soon" below for more.
+
+### API
+Users can access data via a RESTful API with several different endpoints. They are listed first with examples below.
+
+1. '/smokestackAPI/v1.0/port_query_shipsPerDay/<port>'
+1. '/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>'
+1. '/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>'
+1. '/smokestackAPI/v1.0/ship_query_totalTimePerPort/<ship>'
+
+``` '/smokestackAPI/v1.0/port_query_shipsPerDay/<port>' ```
+Value:
+Returns the number of ships per day throughout the database record for a given port.
+
+Usage:
+Port names generally contain spaces and commas, which must be encoded. Spaces are replaced with `%20` and commas are replaced with `%2c`.
+
+Example:
+To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
+	``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
+
+``` '/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>' ```
+Value:
+Returns the cumulative visit time per quarter-year throughout the database record for a given port.
+
+Usage:
+Port names generally contain spaces and commas, which must be encoded to be used in a url/uri. Spaces are replaced with `%20` and commas are replaced with `%2c`.
+
+Example:
+To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
+	``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
+
 
 ## Work Flow
 1. Extract from US Gov server (marinecadastre.gov) to S3 data lake
@@ -47,8 +80,9 @@ Users can view records in two ways: "Select Port" or "Select Ship". For each, a 
 
 ## Coming Soon (in order of priority)
 1. Join air quality data from aqs.epa.gov.
-1. Model emission inventory.
+1. Model emissions inventory.
 1. Allow time range filtering for all queries.
+1. Implement authentication for API.
 1. Build out PostGIS geospatial queries with map drag.
 1. Join weather data from NOAA (air temperature, wind speed, precipitation).
 1. Data from 2012-2015, extracted from .gdb format.

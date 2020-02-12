@@ -243,6 +243,13 @@ def api_get_port_visits_quarterly(port):
 
 # curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/Port%20Fourchon%2c%20LA"
 # curl http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_visitTimeQuarterly/Port%20Fourchon%2c%20LA
+@app.route('/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>', methods=['GET'])
+def api_get_ship_visits_quarterlyPerPort(ship):
+	return jsonify(aggregate_ship_visits_per_port(ship))
+
+@app.route('/smokestackAPI/v1.0/ship_query_totalTimePerPort/<ship>', methods=['GET'])
+def api_get_ship_totalTimePerPort(ship):
+	return jsonify(aggregate_ship_visits_total_time(ship))
 
 # @app.route('/port_index')
 # def port_index():
