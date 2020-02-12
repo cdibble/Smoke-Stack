@@ -1,6 +1,7 @@
 # daily_ships = aggregate_by_port_ships_per_date('Port Fourchon, LA')
 # daily_ships = pd.DataFrame(daily_ships, columns = ["BaseDateTime", "VesselCategory", "Count"])
-from flask import Flask, escape, render_template, request
+from flask import Flask, escape, render_template, request, jsonify
+from flask_restful import Resource, Api
 import psycopg2
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,12 +11,14 @@ import base64
 from urllib.parse import quote
 # from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
-
+api = Api(app)
 # run app with self-call
 # if __name__ == '__main__':
 
 def get_db():
-	connection = psycopg2.connect("dbname=pings_db_one_month user=db_user password=look_at_data host=44.232.197.79 port=5432")
+		# use first for development (one month of data)
+	# connection = psycopg2.connect("dbname=pings_db_one_month user=db_user password=look_at_data host=44.232.197.79 port=5432")
+	connection = psycopg2.connect("dbname=pings_2015_to_2017 user=db_user password=look_at_data host=44.232.197.79 port=5432")
 	return connection	
 
 def get_port_list():
@@ -96,6 +99,7 @@ def aggregate_ship_visits_total_time_quarterly(PORT_NAME):
 	return daily_ships_in_port
 # aggregate_by_port_ships_per_date('Port Fourchon, LA')
 # PORT_NAME = 'Port Everglades, FL'
+
 def plot_ship_visits_total_time_quarterly(PORT_NAME):
 	ships_visit_time_per_port = pd.DataFrame(aggregate_ship_visits_total_time_quarterly(PORT_NAME), columns = ["Quarter", "PORT_NAME", "VesselCategory", "Total_Visit_Time"])
 	# ships_visit_time_per_port = pd.DataFrame(ships_visit_time_per_port, columns = ["Quarter", "PORT_NAME", "VesselCategory", "Total_Visit_Time"])
@@ -118,7 +122,7 @@ def plot_ship_visits_total_time_quarterly(PORT_NAME):
 		return "data:image/png;base64,()"
 
 #### Aggregate ship visits (count) at each port.
-SHIP='Victory'
+# SHIP='Victory'
 def aggregate_ship_visits_per_port(SHIP):
 	con = get_db()
 	curs = con.cursor()
@@ -224,6 +228,21 @@ def ship_compute():
 @app.route('/about')
 def about():
 	return render_template("about.html")
+
+########################################	
+### --------- API --------------- ###
+########################################
+@app.route('/smokestackAPI/v1.0/port_query_shipsPerDay/<port>', methods=['GET'])
+def api_get_port_table(port):	
+	# with app.app_context(): # for development 
+	return jsonify(aggregate_by_port_ships_per_date(port))
+
+@app.route('/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>', methods=['GET'])
+def api_get_port_visits_quarterly(port):
+	return jsonify(aggregate_ship_visits_total_time_quarterly(port))
+
+# curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/Port%20Fourchon%2c%20LA"
+# curl http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_visitTimeQuarterly/Port%20Fourchon%2c%20LA
 
 # @app.route('/port_index')
 # def port_index():

@@ -63,10 +63,11 @@ def geoPoint_buffer_to_polygon(point):
 	)
 	# transform point to local aeqd
 	point_aeqd = transform(wgs84_to_aeqd, point)
-	aeqd_buffered_to_polygon = point_aeqd.buffer(20_000)
+	aeqd_buffered_to_polygon = point_aeqd.buffer(20000) # distance in meters
 	polygon_wgs84 = transform(aeqd_to_wgs84, aeqd_buffered_to_polygon)
 	# print(type(polygon_wgs84.wkt))
 	return(polygon_wgs84.wkt)
+	point1 = 'POINT (-122.3990419997799 37.80666499965927)'
 	# print(mapping(polygon_wgs84))
 	# print(json.dumps(mapping(buffer_wgs84)))
 ## Test geoPoint_buffer_to_polygon
@@ -88,6 +89,9 @@ geoPorts = ports.withColumn('LON_LAT', lonLatString_to_geoPoint_udf(ports.X, por
 polyPorts = geoPorts.withColumn('POLYGON10KM', geoPoint_buffer_to_polygon_udf(geoPorts.LON_LAT))
 
 
+## Write to Parquet
+write_df_to_parquet(sc, polyPorts)
+
 # Version 1. Slow.
 # lons = [float(x[0]) for x in ports.select('X').collect()] # get lons as list of floats
 # lats = [float(x[0]) for x in ports.select('Y').collect()] # get lats as list of floats
@@ -106,6 +110,3 @@ polyPorts = geoPorts.withColumn('POLYGON10KM', geoPoint_buffer_to_polygon_udf(ge
 # # Join ports_index and geoPoints_index using index
 # geoPorts = ports_index.join(spark_geoPoints, "index")
 # polyPorts = geoPorts.join(spark_geoPolys, "index")
-
-## Write to Parquet
-write_df_to_parquet(sc, polyPorts)
