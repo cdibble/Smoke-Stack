@@ -8,10 +8,10 @@ Estimate ship emissions inventories and air quality trends in ports to lower sup
 <hr/>
 
 ## Table of Contents
-1. [Overview](README.md$Overview)
-1. [Work Flow](README.md$Work-Flow)
-1. [Coming Soon](README.md$Coming-Soon-(in-order-of-priority))
-1. [User Guide](README.md$User-Guide)
+1. [Overview](README.md#Overview)
+1. [Work Flow](README.md#Work-Flow)
+1. [Coming Soon](README.md#Coming-Soon-(in-order-of-priority))
+1. [User Guide](README.md#User-Guide)
 
 ## Overview
 Global trade relies on the constant movement of goods by maritime shipping, but the vessels involved generate a great deal of pollution. In addition to carbon emissions, they produce sulphate and nitrate pollutants and particulate matter. This pollution is known to affect air quality in port regions and a patchwork of regulations has unfolded to address the issue.
@@ -21,7 +21,7 @@ https://www.sciencedirect.com/science/article/pii/S0048969716327851
 Automatic Identification System (AIS), which tracks the movement of ships using ship-to-shore radio, has been required on large commercial vessels in since 2002. With AIS, it is possible to inventory the emissions of ships while in port and to track trends in air quality in port areas related to shipping activity.
 
 ## User Guide
-Smoke Stack exposes the data via a simple GUI as well as through a RESTful API. They are described briefly below. For more information about building the project and the implementation details, [engineering details](README.md$Engineering-Details) is a good place to start.
+Smoke Stack exposes the data via a simple GUI as well as through a RESTful API. They are described briefly below. For more information about building the project and the implementation details, [engineering details](README.md#Engineering-Details) is a good place to start.
 
 ### GUI
 Users can view records in two ways: "Select Port" or "Select Ship". For each, a drop down menu contains options that can be queried via the "Submit" button.
@@ -35,10 +35,10 @@ Coming features: Concurrent air quality trends, regression with air quality and 
 ### API
 Users can access data via a RESTful API with several different endpoints. They are listed first with examples below.
 
-1. ['/smokestackAPI/v1.0/port_query_shipsPerDay/<port>'](README.md$API-Endpoing-1)
-1. ['/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>'](README.md$API-Endpoing-2)
-1. ['/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>'](README.md$API-Endpoing-3)
-1. ['/smokestackAPI/v1.0/ship_query_totalTimePerPort/<ship>'](README.md$API-Endpoing-4)
+1. ['/smokestackAPI/v1.0/port_query_shipsPerDay/<port>'](README.md#API-Endpoing-1)
+1. ['/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>'](README.md#API-Endpoing-2)
+1. ['/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>'](README.md#API-Endpoing-3)
+1. ['/smokestackAPI/v1.0/ship_query_totalTimePerPort/<ship>'](README.md#API-Endpoing-4)
 
 ### API Endpoint 1
 ``` '/smokestackAPI/v1.0/port_query_shipsPerDay/<port>' ```
