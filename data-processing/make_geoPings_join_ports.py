@@ -5,19 +5,19 @@ from pyspark import SparkContext, SparkConf, SQLContext
 from pyspark.sql import functions as psql
 from pyspark.sql.functions import pandas_udf, PandasUDFType, lag
 from pyspark.sql.window import Window
-import pyarrow # for pandas_udf functionality
+# import pyarrow # for pandas_udf functionality
 from pyspark.sql import Row
 from pyspark.sql.types import *
 # import boto3
 import botocore
 import datetime
 import os
-import rasterio
+# import rasterio
 from shapely.geometry import Point, Polygon
 
 import shapely
-import geopyspark
-import geopandas 
+# import geopyspark
+# import geopandas 
 from shapely.ops import transform
 import geopyspark
 import pyproj # projection strings for geospatial

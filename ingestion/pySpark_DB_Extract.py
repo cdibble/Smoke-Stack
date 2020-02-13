@@ -9,21 +9,12 @@ import datetime
 import os
 import timeit
 import time
-# import pandas as pd
-# import numpy as np
-# from functools import reduce
-# import sys
-# sys.path.append('~/Scripts')
-# import extract_gdb_to_parquet_functions as EF
-# module, inputFile1, outputDir1 = sys.argv
-
 	# If running as spark-submit script.
 conf = SparkConf().setAppName("AIS_Extract") #.setMaster(spark://10.0.0.7:7077)
 # sc = SparkContext(conf=conf, pyFiles = ["/home/ubuntu/Scripts/extract_gdb_functions.py"] ) # to pass scprits to spark context
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 # spark = SparkSession.builder.appName("AIS_Extract") # https://github.com/carolsong/tonebnb/blob/master/batching/util.py
-# spark = psql.builder.appName("AIS_Extract").getOrCreate() # I don't think this is necessary if you use SparkConf().
 
 ###### Functions to Parse Files
 def parse_csv(spark):
@@ -54,14 +45,7 @@ def parse_csv(spark):
 	])
 	try:
 		# Read CSVs, add partition columns
-		# tic = time.clock()
-		# csv_i = sqlContext.read.csv(source_bucket_dir + source_file_name, schema = schema, header = True)
-		# tok = time.clock()
-		# tok - tic
-		# csv_i = sqlContext.read.format("csv").option(schema = schema).option("header", True).load(source_bucket_dir + source_file_name)
 		csv_i = sqlContext.read.csv(source_bucket_dir + source_file_name, schema = schema, header = True) # Fastest by an order of mag
-		# csv_i = sqlContext.read.format("csv").option("header", True).load(source_bucket_dir + source_file_name).rdd
-		# csv_i = sc.textFile(source_bucket_dir + source_file_name).map(lambda line: (line.split(',')[0], line.split(',')[1])).collect()
 		csv_i = csv_i.withColumn("BaseDateTime", psql.to_timestamp('BaseDateTime'))
 		csv_i = csv_i.withColumn("Year", psql.year('BaseDateTime'))
 		csv_i = csv_i.withColumn("Month", psql.month('BaseDateTime'))
@@ -74,7 +58,7 @@ def write_csv_to_parquet(spark, csv_i):
 		target_bucket_dir = "s3a://ais-ship-pings-parquet/"
 		target_file_name = 'pings.parquet'
 		csv_i.write.mode("append").format('parquet').partitionBy('Year', 'Month').option('compression', 'snappy').save(target_bucket_dir + target_file_name)
-		# csv_i.write.mode("append").format('parquet').option('compression', 'snappy').save(target_bucket_dir + target_file_name)
+
 # Script to get files/folders for parsing and call functions
 ## 1. initiate boto3 resource & get folders with GDB databases
 s3 = boto3.resource('s3') # TODO: Initialize is expensive. Can I do all of the client. operations below with this resrouce?
@@ -92,10 +76,6 @@ csv_files = [i for i in keys_in_bucket if 'csv' in i] # find all csv files
 # csv_files_spark = sc.parallelize(csv_files[0:10]) # create spark RDD from list
 
 # 2. Parse CSVs
-# csv_tables = csv_files_spark.map(lambda x: write_csv_parquet_to_s3(parse_csv(x, bucket_in = 'ais-ship-data-raw').collect(), file_name = 'pings_from_csv.parquet'))
-# csv_i = sqlContext.read.format("csv").option("inferSchema", \
-# 		True).option("header", True).load("s3a://ais-ship-data-raw/*")
-
 csv_i = parse_csv(sc)
 write_csv_to_parquet(sc, csv_i)
 
@@ -103,5 +83,4 @@ write_csv_to_parquet(sc, csv_i)
 # gdb_tables = gdb_folders_spark.map(lambda x: parse_gdb(x, bucket_in = 'ais-ship-data-raw'))
 # print(gdb_tables)
 # print(gdb_tables.first())
-
 # pings, vessels = parse_gdb(gdb_folders[0], bucket_in = 'ais-ship-data-raw')

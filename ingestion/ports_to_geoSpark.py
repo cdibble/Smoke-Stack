@@ -13,11 +13,8 @@ import rasterio
 from shapely.geometry import Point, Polygon, mapping
 import shapely.wkt
 from shapely.ops import transform
-import geopyspark
-from geopandas import GeoDataFrame
+# import geopyspark
 import pyproj
-# import pyrasterframes
-# from pyrasterframes.utils import create_rf_spark_session
 # sparkaf = create_rf_spark_session()## utility
 # import json
 from functools import partial
@@ -66,12 +63,11 @@ def geoPoint_buffer_to_polygon(point):
 	aeqd_buffered_to_polygon = point_aeqd.buffer(20000) # distance in meters
 	polygon_wgs84 = transform(aeqd_to_wgs84, aeqd_buffered_to_polygon)
 	# print(type(polygon_wgs84.wkt))
-	return(polygon_wgs84.wkt)
-	point1 = 'POINT (-122.3990419997799 37.80666499965927)'
-	# print(mapping(polygon_wgs84))
-	# print(json.dumps(mapping(buffer_wgs84)))
+	return(polygon_wgs84.wkt)	
 ## Test geoPoint_buffer_to_polygon
 # geoPoint_buffer_to_polygon(list(geoPorts.select('LON_LAT').first())[0])
+# point1 = 'POINT (-122.3990419997799 37.80666499965927)'
+
 # Register UDF
 geoPoint_buffer_to_polygon_udf = psql.udf(geoPoint_buffer_to_polygon, StringType())
 
@@ -82,31 +78,10 @@ def write_df_to_parquet(spark, df_i):
 		target_file_name = 'geoPorts.parquet'
 		df_i.write.mode("append").format('parquet').option('compression', 'snappy').save(target_bucket_dir + target_file_name)
 ## Get Data -> Munge Spatial Points -> Add Polygon with Buffer 
-# client.download_file('BUCKET_NAME', 'OBJECT_NAME', 'FILE_NAME')
 ports = sqlContext.read.csv("s3a://major-us-ports-csv/" + 'Major_Ports.csv', header = 'True')
-# Version 2.
 geoPorts = ports.withColumn('LON_LAT', lonLatString_to_geoPoint_udf(ports.X, ports.Y))
 polyPorts = geoPorts.withColumn('POLYGON10KM', geoPoint_buffer_to_polygon_udf(geoPorts.LON_LAT))
 
 
 ## Write to Parquet
 write_df_to_parquet(sc, polyPorts)
-
-# Version 1. Slow.
-# lons = [float(x[0]) for x in ports.select('X').collect()] # get lons as list of floats
-# lats = [float(x[0]) for x in ports.select('Y').collect()] # get lats as list of floats
-# geoPoints = [Point(x, y) for x, y in zip(lons, lats)] # turn lons, lats into Point()
-# geoPolys_wkt = [geoPoint_buffer_to_polygon(point) for point in geoPoints]
-# geoPoints_wkt = [geoPoints[i].wkt for i in range(len(geoPoints))]
-# # spark DataFrame version (use this to avoid conversion to RDD and back)
-# # Convert geoPoints to data frame with index column
-# R = Row('index', 'LON_LAT')
-# spark_geoPoints = sqlContext.createDataFrame([R(i, x) for i, x in enumerate(geoPoints_wkt)])
-# # Convert geoPoly to data frame with index column
-# R = Row('index', 'POLYGON10KM')
-# spark_geoPolys = sqlContext.createDataFrame([R(i, x) for i, x in enumerate(geoPolys_wkt)])
-# # geoPoints_index = index.zip(spark_geoPoints)
-# ports_index = ports.withColumn('index', psql.monotonically_increasing_id())
-# # Join ports_index and geoPoints_index using index
-# geoPorts = ports_index.join(spark_geoPoints, "index")
-# polyPorts = geoPorts.join(spark_geoPolys, "index")
