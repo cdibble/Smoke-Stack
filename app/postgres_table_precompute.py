@@ -37,7 +37,9 @@ con.close()
 con = get_db()
 curs = con.cursor()
 # curs.execute('DROP TABLE unique_vessel_names') # drop if exists
-curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT "VesselName", count(DISTINCT "VesselName") from pings_db group by "VesselName" ''')
+############### NOTE: NEED TO FILTER OUT SOME OF THESE VESSELS - LIST IS TOO BIG - FILTER OUT PLEASURE CRAFT #######
+# curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT "VesselName", count(DISTINCT "VesselName") from pings_db_withVC group by 1,2 ''')
+curs.execute(''' CREATE TABLE unique_vessel_names2 AS SELECT "VesselName" from pings_db_withVC  where "VesselCategory" not in ('Other') group by 1 ''')
 # curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT DISTINCT "VesselName" FROM pings_db ''')
 con.commit()
 

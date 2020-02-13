@@ -20,7 +20,7 @@
         </select>
         <input type="submit" value="Submit">
       </form>
-    <p>When you select a port, you will recieve view options.</p>
+    <!-- <p></p> -->
     <div id="result">
       {% if port is defined %}
           You have selected: {{ port }}
@@ -41,20 +41,18 @@
       });
       // Now add the layer onto the map
       map.addLayer(layer);
-      var customOptions =
-      {
-      // 'maxWidth': '400',
-      // 'width': '200',
+      // var customOptions =
+      // {
+      // // 'maxWidth': '400',
+      // // 'width': '200',
+      // 'className' : 'popupCustom'
+      // }
 
-      'className' : 'popupCustom'
-      }
       {% for _, row in port_df.iterrows() %}
-        var marker1 = L.marker([ {{ row["LAT"] }} , {{ row["LON"] }} ], {opacity : 0.9}).addTo(map).bindPopup("<strong ><div style='color: black'>{{ row["PORT_NAME"] }}</div></strong>").openPopup();
-      {% endfor %}
-
-      var marker2 = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong><div style='color: black'>{{ port }}</div></strong>").setLatLng(e.latlng).openPopup();
+        var marker1 = L.circle([ {{ row["LAT"] }} , {{ row["LON"] }} ], 200, {opacity : 0.9}).addTo(map).bindPopup("<strong ><div style='color: black'>{{ row["PORT_NAME"] }}</div></strong>");
       // marker2.on('click', e => {})
-      
+      {% endfor %}
+      var marker2 = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong><div style='color: black'>{{ port }}</div></strong>").openPopup();
     </script>
 
     <article id = 'plot1'>

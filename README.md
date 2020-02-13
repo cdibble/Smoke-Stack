@@ -62,6 +62,16 @@ Example:
 To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
 	``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 
+``` '/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>' ```
+Value:
+Returns the number of visits to each visited port for a given ship.
+
+Usage:
+Ship names generally contain spaces, which must be encoded to be used in a url/uri. Spaces are replaced with `%20`.
+
+Example:
+To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
+	``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 
 ## Work Flow
 1. Extract from US Gov server (marinecadastre.gov) to S3 data lake

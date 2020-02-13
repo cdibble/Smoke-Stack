@@ -9,6 +9,7 @@ import seaborn as sns
 import io
 import base64
 from urllib.parse import quote
+import re # regex ops
 # from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 api = Api(app)
@@ -27,6 +28,14 @@ def get_port_list():
 	curs.execute('''SELECT DISTINCT "PORT_NAME" FROM ports_db''')
 	port_list = curs.fetchall()
 	port_list = [port[0] for port in port_list]
+	port_states = [re.search('[A-Z]{2}', x).group() if re.search('[A-Z]{2}', x) else "None" for x in port_list]
+	port_df = pd.DataFrame({"ports" : port_list, "states" : port_states})
+	# Fix two ports that don't have state abbreviations
+	port_df.loc[port_df['ports'] == "Huntington - Tristate", 'states'] = "WV"
+	port_df.loc[port_df['ports'] == "Central Louisiana Regional Port", 'states'] = "LA"
+	# sort by state then by port
+	port_df = port_df.sort_values(['states', 'ports'])
+	port_list = list(port_df['ports'])
 	return port_list
 port_list = get_port_list()
 
@@ -44,7 +53,7 @@ def get_ship_list():
 	con = get_db()
 	curs = con.cursor()
 	#curs.execute('''SELECT DISTINCT "VesselName" FROM pings_db_withVC''')
-	curs.execute('''SELECT "VesselName" FROM unique_vessel_names''')
+	curs.execute('''SELECT "VesselName" FROM unique_vessel_names2''') # unique_vessel_names2 excludes 'Other' categories.
 	ship_list = curs.fetchall()
 	ship_list = [ship[0] for ship in ship_list]
 	return ship_list
@@ -223,6 +232,10 @@ def ship_compute():
 		ship_plot_url = plot_ship_visits_per_port(ship)
 		ship_plot_total_time_url = plot_ship_visits_total_time(ship)
 	return render_template("ship_index.html", ship_list = ship_list_overall, plot_url = ship_plot_url, ship_plot_total_time = ship_plot_total_time_url, ship = ship)
+
+@app.route('/api_documentation')
+def api_doc():
+	return render_template("api_doc.html")
 
 # About page
 @app.route('/about')

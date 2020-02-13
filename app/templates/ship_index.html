@@ -10,47 +10,22 @@
     {% extends "template.html" %}
     {% block content %}
     <center>
-    <!--
-    <h1> Select A Port </h1>
-      <form id="form1" action="/port_lat_lon" method="POST">
-        <select id = "port", name = "port">
-          {% for port in port_list %}
-          <option value= "{{port}}" SELECTED = "selected">{{port}}</option>"
-          {% endfor %} 
-        </select>
-        <input type="submit" value="Submit">
-      </form>
-    <p>When you select a port, you will recieve view options.</p>
-    <div id="result">
-      {% if port is defined %}
-          You have selected: {{ port }}
-      {% endif %}
-    -->
-    <!-- <div id="map" style="height: 400px;width: 600px"></div>
-    <script type="text/javascript">
-      // The first parameter are the coordinates of the center of the map
-      // The second parameter is the zoom level
-      var map = L.map('map').setView([40, -100], 3);
-      // {s}, {z}, {x} and {y} are placeholders for map tiles
-      // {x} and {y} are the x/y of where you are on the map
-      // {z} is the zoom level
-      // {s} is the subdomain of cartodb
-        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-        });
-      // Now add the layer onto the map
-      map.addLayer(layer);
-      {% for port in port_list %}
-        var marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong>{{ port }}</strong>").openPopup();
-      {% endfor %}
-      var marker = L.marker([{{ lat }}, {{ lon }}]).addTo(map).bindPopup("<strong>{{ port }}</strong>").openPopup();
-    </script> -->
-
-    <!-- <article id = 'plot1'>
-      <img src = {{plot_url}} alt = "plot1" style="width:700px; height:600px" >
-    </article> -->
-
     <h1> Select A Ship </h1>
+<!-- new from https://dev.to/brunooliveira/flask-series-part-6-improving-user-input-with-autocomplete-4e06 -->
+   <!--  <form method="POST" autocomplete="off">
+    <div class='textin'>
+        <div class='input-group'>
+            <input id="autocomplete" class='form-control' type='text' name='ship' placeholder='Enter ship name...'/>
+            <span class="input-group-btn">
+              <button id="searchBtn" type='submit' class='btn btn-default'>
+                <span class='glyphicon glyphicon-search'></span>
+              </button>
+            </span>
+
+        </div>
+    </div>
+    </form> -->
+<!-- end new -->
       <form id="form1" action="/ship_compute" method="POST">
         <select id = "ship", name = "ship">
           <option value= {{ship}} selected = "selected">{{ship}}</option>
@@ -73,6 +48,9 @@
     </article>
 
     <div class = "hbar"> </div>
+
+
+
 
   </center>
 
