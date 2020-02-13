@@ -71,6 +71,7 @@ con = get_db()
 curs = con.cursor()
 #### *** move to postgresql file :: pre-compute this table for faster queries.
 # curs.execute(" DROP TABLE ship_visit_time ") # drop if exists
+# using extract EPOCH from difftime gives time in seconds.
 curs.execute('''CREATE TABLE ship_visit_time AS
 	SELECT "VesselName", "PORT_NAME", "subgroup", "VesselCategory", "Length", "Width", "Draft",
 	MIN("BaseDateTime") as "Entry_Time",
@@ -97,7 +98,6 @@ con.commit()
 # TABLE GROUPS BY SHIP, PORT_NAME, and subgroup (== visit) AND AGGREGATES VISIT_TIME
 con = get_db()
 curs = con.cursor()
-#### *** move to postgresql file :: pre-compute this table for faster queries.
 # curs.execute(" DROP TABLE ship_visit_quarterly ") # drop if exists
 curs.execute('''CREATE TABLE ship_visit_quarterly AS
 	SELECT "PORT_NAME", "VesselCategory",

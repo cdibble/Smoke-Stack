@@ -220,7 +220,7 @@ def ship_index():
 		ship = request.form.get("ship")
 		connection = get_db() #psycopg2.connect("dbname=pings_db_withVC user=db_user password=look_at_data host=44.232.197.79 port=5432")
 		cursor = connection.cursor()
-	return render_template("ship_index.html", ship_list = ship_list_overall, port_list = port_list, ship = "Victory")
+	return render_template("ship_index.html", ship_list = ship_list_overall, port_list = port_list, ship = "MADISON")
 
 @app.route('/ship_compute', methods=['GET', 'POST'])
 def ship_compute():
