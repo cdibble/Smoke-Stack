@@ -35,12 +35,13 @@ Coming features: Concurrent air quality trends, regression with air quality and 
 ### API
 Users can access data via a RESTful API with several different endpoints. They are listed first with examples below.
 
-1. ['/smokestackAPI/v1.0/port_query_shipsPerDay/<port>'](README.md#API-Endpoint-1)
-1. ['/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>'](README.md#API-Endpoint-2)
-1. ['/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>'](README.md#API-Endpoint-3)
-1. ['/smokestackAPI/v1.0/ship_query_totalTimePerPort/<ship>'](README.md#API-Endpoint-4)
+1. ['/smokestackAPI/v1.0/port_query_shipsPerDay/?port'](README.md#API-Endpoint-1)
+1. ['/smokestackAPI/v1.0/port_query_visitTimeQuarterly/?port'](README.md#API-Endpoint-2)
+1. ['/smokestackAPI/v1.0/ship_query_visitsPerPort/?ship'](README.md#API-Endpoint-3)
+1. ['/smokestackAPI/v1.0/ship_query_totalTimePerPort/?ship'](README.md#API-Endpoint-4)
 
-### API Endpoint 1
+#### API Endpoint 1
+Port query - Ships Per Day
 	``` '/smokestackAPI/v1.0/port_query_shipsPerDay/<port>' ```
 
 Value:
@@ -53,7 +54,8 @@ Example:
 To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
 
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
-### API Endpoint 2
+#### API Endpoint 2
+Port query - Total Visit Time per Quarter Year
 	``` '/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>' ```
 Value:
 Returns the cumulative visit time per quarter-year throughout the database record for a given port.
@@ -65,7 +67,8 @@ Example:
 To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
 
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
-### API Endpoint 3
+#### API Endpoint 3
+Ship query - Total Visits per Port
 	``` '/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>' ```
 Value:
 Returns the number of visits to each visited port for a given ship.
@@ -77,7 +80,8 @@ Example:
 To query with ship = "", use "San%20Francisco%2c%20".
 
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
-### API Endpoint 4
+#### API Endpoint 4
+Ship query - Total Visit Time per Port
 	``` '/smokestackAPI/v1.0/ship_query_totalTimePerPort/<ship>' ```
 Value:
 Returns the total visit time in days spent at each visited port for a given ship.
@@ -89,6 +93,10 @@ Example:
 To query with ship = "", use "San%20Francisco%2c%20".
 
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/ship_query_totalTimePerPort/San%20Francisco%2c%20CA" ```
+### API Endpoing 5
+Coming Soon : Port query - All ship visits at given port per time range.
+### API Endpoing 5
+Coming Soon : Ship query - All port visits for given ship per time range.
 
 ## Work Flow
 1. Extract from US Gov server (marinecadastre.gov) to S3 data lake
