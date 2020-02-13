@@ -9,9 +9,13 @@ Estimate ship emissions inventories and air quality trends in ports to lower sup
 
 ## Table of Contents
 1. [Overview](README.md#Overview)
-1. [Work Flow](README.md#Work-Flow)
-1. [Coming Soon](README.md#Coming-Soon-(in-order-of-priority))
 1. [User Guide](README.md#User-Guide)
+	1. [GUI](README.md#GUI)
+	1. [API](README.md#API)
+1. [Work Flow](README.md#Work-Flow)
+1. [Tech Stack](README.md#Tech-Stack)
+1. [Coming Soon](README.md#Coming-Soon-(in-order-of-priority\) )
+1. [Engineering Details](README.md#Engineering-Details)
 
 ## Overview
 Global trade relies on the constant movement of goods by maritime shipping, but the vessels involved generate a great deal of pollution. In addition to carbon emissions, they produce sulphate and nitrate pollutants and particulate matter. This pollution is known to affect air quality in port regions and a patchwork of regulations has unfolded to address the issue.
@@ -99,7 +103,7 @@ To query with ship = "", use "San%20Francisco%2c%20".
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/ship_query_totalTimePerPort/San%20Francisco%2c%20CA" ```
 #### API Endpoing 5
 Coming Soon : Port query - All ship visits at given port per time range.
-#### API Endpoing 5
+#### API Endpoing 6
 Coming Soon : Ship query - All port visits for given ship per time range.
 
 ## Work Flow
@@ -127,10 +131,10 @@ Coming Soon : Ship query - All port visits for given ship per time range.
 1. Data from 2012-2015, extracted from .gdb format.
 
 ## Engineering Details
-The project was implemented in stages that reflect the directory structure of this repository: [ingestion](/ingestion), [data processing](/data-processing), [database build](/database-scripts), and [data exposure](/app).
+The project was implemented in stages that reflect the directory structure of this repository: [ingestion](/ingestion), [data processing](/data-processing), [database build](/database-scripts), and [data exposure](/app). See README.md in those directories for more details.
 
-Spark did the distributed processing needed to extract the data from its home server (marinecadastre.gov), store it in an S3 data lake, and apply geo-hashing and processing steps. Intermediate data structures were stored in S3 as parquet files awaiting appends from the roughly five years of earlier data that is accessible only in ESRI geodatabase (.gdb) format. 
+Spark did the distributed processing needed to extract the data from its home server (marinecadastre.gov), store it in an S3 data lake, and apply geo-hashing and processing steps. Intermediate data structures were stored in S3 as parquet files awaiting appends from the roughly five years of earlier data that is accessible only in ESRI geodatabase (.gdb) format. Looping back to retrieve that data and parse it is on the to-do list.
 
 The processed data were stored in a PostgreSQL database hosted on AWS EC2 and pre-processed tables for the app were built using SQL queries.
 
-Flask, a python microserver framework, was used to build a RESTful API and GUI to expose the data to end users.
+Flask, a python microserver framework, was used to build the API and GUI to expose the data to end users.
