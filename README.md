@@ -70,7 +70,7 @@ Usage:
 Ship names generally contain spaces, which must be encoded to be used in a url/uri. Spaces are replaced with `%20`.
 
 Example:
-To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
+To query with ship = "", use "San%20Francisco%2c%20".
 	``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 
 ## Work Flow
@@ -97,3 +97,11 @@ To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
 1. Join weather data from NOAA (air temperature, wind speed, precipitation).
 1. Data from 2012-2015, extracted from .gdb format.
 
+## Engineering Details
+The project was implemented in stages: ingestion, data-processing, database build, and data exposure.
+
+Spark did the distributed processing needed to extract the data from its home server (marinecadastre.gov), store it in an S3 data lake, and apply geo-hashing and processing steps.
+
+The processed data were stored in a PostgreSQL database hosted on AWS EC2 and pre-processed tables for the app were built using SQL queries.
+
+Flask, a python microserver framework, was used to build a RESTful API and GUI to expose the data to end users.

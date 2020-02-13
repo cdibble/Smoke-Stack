@@ -31,7 +31,7 @@ def get_aqi(year, minlat, maxlat, minlon, maxlon): # pulls a full year of data f
 	return(aqi_pull)
 
 xx = get_aqi(2015, 32.0 ,32.4, -123.0, -122.0)
-xx = get_aqi(2017, 32.3 ,33, -123, -119)
+xx = get_aqi(2017, 34 ,38, -123, -118)
 
 # Get ports
 source_bucket_dir_ports = "s3a://major-us-ports-csv/"
