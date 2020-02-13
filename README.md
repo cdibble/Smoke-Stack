@@ -49,6 +49,7 @@ Port names generally contain spaces and commas, which must be encoded. Spaces ar
 
 Example:
 To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
+
 	``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 
 ``` '/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>' ```
@@ -60,6 +61,7 @@ Port names generally contain spaces and commas, which must be encoded to be used
 
 Example:
 To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
+
 	``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 
 ``` '/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>' ```
@@ -71,6 +73,7 @@ Ship names generally contain spaces, which must be encoded to be used in a url/u
 
 Example:
 To query with ship = "", use "San%20Francisco%2c%20".
+
 	``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 
 ## Work Flow
