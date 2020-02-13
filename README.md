@@ -42,6 +42,7 @@ Users can access data via a RESTful API with several different endpoints. They a
 
 #### API Endpoint 1
 Port query - Ships Per Day
+
 	``` '/smokestackAPI/v1.0/port_query_shipsPerDay/<port>' ```
 
 Value:
@@ -56,6 +57,7 @@ To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 #### API Endpoint 2
 Port query - Total Visit Time per Quarter Year
+
 	``` '/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>' ```
 Value:
 Returns the cumulative visit time per quarter-year throughout the database record for a given port.
@@ -69,6 +71,7 @@ To query with port = "San Francisco, CA", use "San%20Francisco%2c%20".
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 #### API Endpoint 3
 Ship query - Total Visits per Port
+
 	``` '/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>' ```
 Value:
 Returns the number of visits to each visited port for a given ship.
@@ -82,6 +85,7 @@ To query with ship = "", use "San%20Francisco%2c%20".
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA" ```
 #### API Endpoint 4
 Ship query - Total Visit Time per Port
+
 	``` '/smokestackAPI/v1.0/ship_query_totalTimePerPort/<ship>' ```
 Value:
 Returns the total visit time in days spent at each visited port for a given ship.
@@ -93,9 +97,9 @@ Example:
 To query with ship = "", use "San%20Francisco%2c%20".
 
 ``` curl "http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:5000/smokestackAPI/v1.0/ship_query_totalTimePerPort/San%20Francisco%2c%20CA" ```
-### API Endpoing 5
+#### API Endpoing 5
 Coming Soon : Port query - All ship visits at given port per time range.
-### API Endpoing 5
+#### API Endpoing 5
 Coming Soon : Ship query - All port visits for given ship per time range.
 
 ## Work Flow
