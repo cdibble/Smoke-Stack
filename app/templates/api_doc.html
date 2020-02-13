@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Smoke Stack</title>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+  </head>
+  <body>
+    {% extends "template.html" %}
+    {% block content %}
+    <center>
+    <h1> API Queries </h1>
+	<p></p>
+    <div align="center">
+    	<div style="display: inline-block; text-align: left;">
+    <p >Users can access data via a RESTful API with several different endpoints.</p>
+
+	<p>Query variables must be encoded. Commas are encoded as "%2c" and spaces are encoded as "%20". For example, to query ships per day in San Francisco, CA: </p>
+
+    <p align="center">` /smokestackAPI/v1.0/port_query_shipsPerDay/San%20Francisco%2c%20CA `</p>
+    	Responses are returned in JSON format.
+    </p>
+    <p>
+    	For more info, see: <a href="https://github.com/cdibble/Smoke-Stack"> Smoke Stack Github Repo </a>
+    </p>
+	</div></div>
+	<p></p>
+     <table style="width:100%" class="center">
+	  <tr>
+	    <th>Query Variable</th>
+	    <th>Return Value</th>
+	    <th>URL</th>
+	  </tr>
+	  <tr>
+	    <td>Port</td>
+	    <td>timeseries: ships per day</td>
+	    <td>'/smokestackAPI/v1.0/port_query_shipsPerDay/<port>'</td>
+	  </tr>
+	  <tr>
+	    <td>Port</td>
+	    <td>timeseries: total visit time per quarter</td>
+	    <td>'/smokestackAPI/v1.0/port_query_visitTimeQuarterly/<port>'</td>
+	  </tr>
+	  <tr>
+	    <td>Ship</td>
+	    <td>series: total number of visits per port</td>
+	    <td>'/smokestackAPI/v1.0/ship_query_visitsPerPort/<ship>'</td>
+	  </tr>
+	  <tr>
+	    <td>Ship</td>
+	    <td>series: total visit time per port</td>
+	    <td>'/smokestackAPI/v1.0/ship_query_totalTimePerPort/<ship>'</td>
+	  </tr>
+
+	</table> 
+</center>
+    {% endblock %}
+  </body>
+</html>
+
