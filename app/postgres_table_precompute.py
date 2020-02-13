@@ -37,7 +37,6 @@ con.close()
 con = get_db()
 curs = con.cursor()
 # curs.execute('DROP TABLE unique_vessel_names') # drop if exists
-############### NOTE: NEED TO FILTER OUT SOME OF THESE VESSELS - LIST IS TOO BIG - FILTER OUT PLEASURE CRAFT #######
 # curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT "VesselName", count(DISTINCT "VesselName") from pings_db_withVC group by 1,2 ''')
 curs.execute(''' CREATE TABLE unique_vessel_names2 AS SELECT "VesselName" from pings_db_withVC  where "VesselCategory" not in ('Other') group by 1 ''')
 # curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT DISTINCT "VesselName" FROM pings_db ''')
@@ -50,7 +49,8 @@ con = get_db()
 curs = con.cursor()
 #### *** move to postgresql file :: pre-compute this table for faster queries.
 # curs.execute(" DROP TABLE daily_ships_table ") # drop if exists
-curs.execute('''CREATE TABLE daily_ships_table AS SELECT DATE("BaseDateTime") , "PORT_NAME", "VesselCategory", count(DISTINCT "MMSI") FROM pings_db_withVC GROUP BY 1 , 2 , 3''')
+# curs.execute('''CREATE TABLE daily_ships_table AS SELECT DATE("BaseDateTime") , "PORT_NAME", "VesselCategory", count(DISTINCT "MMSI") FROM pings_db_withVC GROUP BY 1 , 2 , 3''')
+curs.execute('''CREATE TABLE daily_ships_table_name AS SELECT DATE("BaseDateTime") , "PORT_NAME", "VesselCategory", count(DISTINCT "VesselName") FROM pings_db_withVC GROUP BY 1 , 2 , 3''')
 con.commit()
 ####
 
@@ -59,7 +59,6 @@ con.commit()
 # TABLE GROUPS BY SHIP AND COUNTS THE VISITS PER PORT
 con = get_db()
 curs = con.cursor()
-#### *** move to postgresql file :: pre-compute this table for faster queries.
 # curs.execute(" DROP TABLE ships_per_port_table ") # drop if exists
 curs.execute('''CREATE TABLE ships_per_port_table AS SELECT "VesselName", "PORT_NAME", count(DISTINCT "subgroup") FROM pings_db_withVC GROUP BY 1 , 2 ''')
 con.commit()
@@ -69,12 +68,11 @@ con.commit()
 # TABLE GROUPS BY SHIP, PORT_NAME, and subgroup (== visit) AND AGGREGATES VISIT_TIME
 con = get_db()
 curs = con.cursor()
-#### *** move to postgresql file :: pre-compute this table for faster queries.
-# curs.execute(" DROP TABLE ship_visit_time ") # drop if exists
+curs.execute(" DROP TABLE ship_visit_time ") # drop if exists
 # using extract EPOCH from difftime gives time in seconds.
 curs.execute('''CREATE TABLE ship_visit_time AS
 	SELECT "VesselName", "PORT_NAME", "subgroup", "VesselCategory", "Length", "Width", "Draft",
-	MIN("BaseDateTime") as "Entry_Time",
+	MIN("BaseDateTime") as "Entry_Time", MAX("BaseDateTime") as "Exit_Time",
 	EXTRACT(EPOCH FROM MAX("BaseDateTime") - MIN("BaseDateTime")) as "Visit_Time"
 	FROM pings_db_withVC
 	GROUP BY 1 , 2, 3, 4, 5, 6, 7 ''')
@@ -90,7 +88,7 @@ curs.execute('''CREATE TABLE ship_visit_total_time AS
 	SELECT "VesselName", "PORT_NAME", "VesselCategory",
 	"Length", "Width", "Draft", SUM("Visit_Time") AS "Total_Visit_Time"
 	FROM ship_visit_time
-	GROUP BY 1 , 2, 3, 4, 5, 6 ''')
+	GROUP BY 1, 2, 3, 4, 5, 6 ''')
 con.commit()
 ####
 
@@ -104,6 +102,6 @@ curs.execute('''CREATE TABLE ship_visit_quarterly AS
 	(EXTRACT(YEAR FROM "Entry_Time")+1) - (-0.25*EXTRACT(QUARTER FROM "Entry_Time") + 1.25) as "Quarter",
 	SUM("Visit_Time") AS "Total_Visit_Time"
 	FROM ship_visit_time
-	GROUP BY 1 , 2, 3 ''')
+	GROUP BY 1, 2, 3 ''')
 con.commit()
 ####

@@ -98,9 +98,9 @@ To query with ship = "", use "San%20Francisco%2c%20".
 1. Data from 2012-2015, extracted from .gdb format.
 
 ## Engineering Details
-The project was implemented in stages: ingestion, data-processing, database build, and data exposure.
+The project was implemented in stages that reflect the directory structure of this repository: [ingestion](/ingestion), [data processing](/data-processing), [database build](/database-scripts), and [data exposure](/app).
 
-Spark did the distributed processing needed to extract the data from its home server (marinecadastre.gov), store it in an S3 data lake, and apply geo-hashing and processing steps.
+Spark did the distributed processing needed to extract the data from its home server (marinecadastre.gov), store it in an S3 data lake, and apply geo-hashing and processing steps. Intermediate data structures were stored in S3 as parquet files awaiting appends from the roughly five years of earlier data that is accessible only in ESRI geodatabase (.gdb) format. 
 
 The processed data were stored in a PostgreSQL database hosted on AWS EC2 and pre-processed tables for the app were built using SQL queries.
 

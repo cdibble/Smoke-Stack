@@ -108,7 +108,8 @@ def aggregate_ship_visits_total_time_quarterly(PORT_NAME):
 	return daily_ships_in_port
 # aggregate_by_port_ships_per_date('Port Fourchon, LA')
 # PORT_NAME = 'Port Everglades, FL'
-
+# PORT_NAME = 'Port Fourchon, LA'
+ships_visit_time_per_port = aggregate_ship_visits_total_time_quarterly(PORT_NAME)
 def plot_ship_visits_total_time_quarterly(PORT_NAME):
 	ships_visit_time_per_port = pd.DataFrame(aggregate_ship_visits_total_time_quarterly(PORT_NAME), columns = ["Quarter", "PORT_NAME", "VesselCategory", "Total_Visit_Time"])
 	# ships_visit_time_per_port = pd.DataFrame(ships_visit_time_per_port, columns = ["Quarter", "PORT_NAME", "VesselCategory", "Total_Visit_Time"])
