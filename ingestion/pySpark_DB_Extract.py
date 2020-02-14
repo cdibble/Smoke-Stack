@@ -77,6 +77,7 @@ csv_files = [i for i in keys_in_bucket if 'csv' in i] # find all csv files
 
 # 2. Parse CSVs
 csv_i = parse_csv(sc)
+
 write_csv_to_parquet(sc, csv_i)
 
 # 3. TODO Parse GDBs
