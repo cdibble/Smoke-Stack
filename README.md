@@ -14,7 +14,7 @@ Estimate ship emissions inventories and air quality trends in ports to lower sup
 	1. [API](README.md#API)
 1. [Work Flow](README.md#Work-Flow)
 1. [Tech Stack](README.md#Tech-Stack)
-1. [Coming Soon](README.md#Coming-Soon-(in-order-of-priority\) )
+1. [Coming Soon](README.md#Coming-Soon)
 1. [Engineering Details](README.md#Engineering-Details)
 
 ## Overview
@@ -30,17 +30,19 @@ Automatic Identification System (AIS), which tracks the movement of ships using 
 
 By tracking the time ships spend in ports and scaling by their size, Smoke Stack provides an estimate of ship emissions and the basis for tailored models to match with ship protocols and port regulations. Coupled with local air quality sensor data, Smoke Stack is a powerful platform for tracking emissions, evaluating mitigation efforts, and quantifying results.
 
+[Demo Presentation Slides](https://docs.google.com/presentation/d/1q7Qm1ukmDi7Bal3UjiNw1xl4ZdLYwZme4oiog2zXNJY/edit#slide=id.p)
+
 ## User Guide
 Smoke Stack exposes the data via a simple GUI as well as through a RESTful API. They are described briefly below. For more information about building the project and the implementation details, [engineering details](README.md#Engineering-Details) is a good place to start.
 
 ### GUI
 Users can view records in two ways: "Select Port" or "Select Ship". For each, a drop down menu contains options that can be queried via the "Submit" button.
 
-"Select Port" will display a map with the port location and two plots. The first displays the number of ships in that port each day. The second diplays the total visit time in days for different vessel categories for each quarter-year (Cargo, Tanker, Passenger, Fishing, Pleasure, Other).
+"Select Port" will display a map with the port location and two plots. The first displays the number of ships in that port each day. The second diplays the total visit time in days for different vessel categories (Cargo, Tanker, Passenger, Fishing, Pleasure)for each quarter-year.
 
 "Select Ship" displays two plots for the selected vessel. The first shows the total number of visits the ship has made to each of the ports that it has visited. The second shows the cumulative visit time in days that the ship has spent at various ports.
 
-Coming features: Concurrent air quality trends, regression with air quality and visit time scaled by ship tonnage, emissions estimates based on visit time and ship tonnage. See "Coming Soon" below for more.
+Coming features: Concurrent air quality trends, regression with air quality and visit time scaled by ship tonnage, emissions estimates based on visit time and ship tonnage. See [Coming Soon](README.md#Coming-Soon) below for more.
 
 ### API
 Users can access data via a RESTful API with several different endpoints. They are listed first with examples below.
@@ -127,7 +129,8 @@ Coming Soon : Ship query - All port visits for given ship per time range.
 1. PostgreSQL for database storage and queries
 1. Flask for API and GUI frontends.
 
-## Coming Soon (in order of priority)
+## Coming Soon
+(in order of priority)
 1. Join air quality data from aqs.epa.gov.
 1. Model emissions inventory.
 1. Allow time range filtering for all queries.
@@ -137,7 +140,7 @@ Coming Soon : Ship query - All port visits for given ship per time range.
 1. Data from 2012-2015, extracted from .gdb format.
 
 ## Engineering Details
-The project was implemented in stages that reflect the directory structure of this repository: [ingestion](/ingestion), [data processing](/data-processing), [database build](/database-scripts), and [data exposure/front-end](/app). See README.md in those directories for more details.
+The project was implemented in stages that reflect the directory structure of this repository: [ingestion](/ingestion), [data processing](/data-processing), [database build](/database-scripts), and [data exposure/front-end](/app). See README.md in those directories for more details. Also see [presentation slides](https://docs.google.com/presentation/d/1q7Qm1ukmDi7Bal3UjiNw1xl4ZdLYwZme4oiog2zXNJY/edit#slide=id.p).
 
 Spark did the distributed processing needed to extract the data from its home server (marinecadastre.gov), store it in an S3 data lake, and apply geo-hashing and processing steps. Intermediate data structures were stored in S3 as parquet files awaiting appends from the roughly five years of earlier data that is accessible only in ESRI geodatabase (.gdb) format. Looping back to retrieve that data and parse it is on the to-do list.
 
