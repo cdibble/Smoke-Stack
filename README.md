@@ -18,9 +18,11 @@ Estimate ship emissions inventories and air quality trends in ports to lower sup
 1. [Engineering Details](README.md#Engineering-Details)
 
 ## Overview
-Global trade relies on the constant movement of goods by maritime shipping, but the vessels involved generate a great deal of pollution. In addition to carbon emissions, they produce sulphate and nitrate pollutants and particulate matter. This pollution is known to affect air quality in port regions and a patchwork of regulations has unfolded to address the issue.
+Global trade relies on the constant movement of goods by maritime shipping, but the vessels involved generate a great deal of pollution. In addition to carbon emissions, they produce sulphate and nitrate pollutants and particulate matter. This pollution is known to affect air quality in port regions and a patchwork of regulations has unfolded to address the issue. See, for example:
 
-https://www.sciencedirect.com/science/article/pii/S0048969716327851
+[Sea Transport Air Pollution](https://www.intechopen.com/books/current-air-quality-issues/sea-transport-air-pollution)
+[Shipping emissions and their impacts on air quality in China](https://www.sciencedirect.com/science/article/pii/S0048969716327851)
+[Emissions of NOx, SO2, CO, and HCHO from commercial marine shipping during Texas Air Quality Study](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2009JD012094)
 
 Automatic Identification System (AIS), which tracks the movement of ships using ship-to-shore radio, has been required on large commercial vessels in since 2002. With AIS, it is possible to inventory the emissions of ships while in port and to track trends in air quality in port areas related to shipping activity.
 
