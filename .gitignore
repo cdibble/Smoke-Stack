@@ -1,4 +1,6 @@
 # Repo files
+app/flask_setup_script.py
+database-scripts/parquet_to_postgres.py
 install-scripts/postgres_setup.sh
 install-scripts/PostgreSQL_PostGIS_DB_Setup.sh
 aws_setup.sh

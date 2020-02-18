@@ -1,6 +1,11 @@
 # ports_to_geoSpark.py
 #!/usr/bin/env python3
-## Imports
+'''
+This script applys a 20 km buffer around each port location in the major-us-ports.csv file.
+It then stores the data in parquet format in S3.
+
+'''
+## Import
 ## pyspark
 from pyspark import SparkContext, SparkConf, SQLContext
 from pyspark.sql import functions as psql
@@ -13,10 +18,8 @@ import rasterio
 from shapely.geometry import Point, Polygon, mapping
 import shapely.wkt
 from shapely.ops import transform
-# import geopyspark
 import pyproj
 # sparkaf = create_rf_spark_session()## utility
-# import json
 from functools import partial
 import datetime
 import os
@@ -67,10 +70,8 @@ def geoPoint_buffer_to_polygon(point):
 ## Test geoPoint_buffer_to_polygon
 # geoPoint_buffer_to_polygon(list(geoPorts.select('LON_LAT').first())[0])
 # point1 = 'POINT (-122.3990419997799 37.80666499965927)'
-
 # Register UDF
 geoPoint_buffer_to_polygon_udf = psql.udf(geoPoint_buffer_to_polygon, StringType())
-
 
 def write_df_to_parquet(spark, df_i):
 		# Write Parquet to S3 
@@ -81,7 +82,6 @@ def write_df_to_parquet(spark, df_i):
 ports = sqlContext.read.csv("s3a://major-us-ports-csv/" + 'Major_Ports.csv', header = 'True')
 geoPorts = ports.withColumn('LON_LAT', lonLatString_to_geoPoint_udf(ports.X, ports.Y))
 polyPorts = geoPorts.withColumn('POLYGON10KM', geoPoint_buffer_to_polygon_udf(geoPorts.LON_LAT))
-
 
 ## Write to Parquet
 write_df_to_parquet(sc, polyPorts)

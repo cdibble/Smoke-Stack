@@ -1,3 +1,5 @@
 # Database scripts
 
-Use this to create databases, scripts to create tables, user permissions. Do not put your database passwords here.
+These files were used to build pre-computed Postgres tables to enable fast queries in the app and API.
+
+1. postgres_table_precompute.py

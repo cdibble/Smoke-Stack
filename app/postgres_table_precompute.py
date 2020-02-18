@@ -28,7 +28,7 @@ curs.execute(''' CREATE TABLE pings_db_withVC AS SELECT *,
 	WHEN "VesselType"::int IN (80, 81, 82, 83, 84, 85, 86, 87, 88, 89) THEN 'Tanker'
 	ELSE 'Other'
 	END "VesselCategory"
-	FROM pings_db
+	FROM pings_final_in_port_with_visitsubgroup_noudf
 	''')
 con.commit()
 
@@ -36,7 +36,7 @@ con.commit()
 con.close()
 con = get_db()
 curs = con.cursor()
-# curs.execute('DROP TABLE unique_vessel_names') # drop if exists
+curs.execute('DROP TABLE unique_vessel_names2') # drop if exists
 # curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT "VesselName", count(DISTINCT "VesselName") from pings_db_withVC group by 1,2 ''')
 curs.execute(''' CREATE TABLE unique_vessel_names2 AS SELECT "VesselName" from pings_db_withVC  where "VesselCategory" not in ('Other') group by 1 ''')
 # curs.execute(''' CREATE TABLE unique_vessel_names AS SELECT DISTINCT "VesselName" FROM pings_db ''')
@@ -48,7 +48,7 @@ con.commit()
 con = get_db()
 curs = con.cursor()
 #### *** move to postgresql file :: pre-compute this table for faster queries.
-# curs.execute(" DROP TABLE daily_ships_table ") # drop if exists
+curs.execute(" DROP TABLE daily_ships_table ") # drop if exists
 # curs.execute('''CREATE TABLE daily_ships_table AS SELECT DATE("BaseDateTime") , "PORT_NAME", "VesselCategory", count(DISTINCT "MMSI") FROM pings_db_withVC GROUP BY 1 , 2 , 3''')
 curs.execute('''CREATE TABLE daily_ships_table_name AS SELECT DATE("BaseDateTime") , "PORT_NAME", "VesselCategory", count(DISTINCT "VesselName") FROM pings_db_withVC GROUP BY 1 , 2 , 3''')
 con.commit()
@@ -59,7 +59,7 @@ con.commit()
 # TABLE GROUPS BY SHIP AND COUNTS THE VISITS PER PORT
 con = get_db()
 curs = con.cursor()
-# curs.execute(" DROP TABLE ships_per_port_table ") # drop if exists
+curs.execute(" DROP TABLE ships_per_port_table ") # drop if exists
 curs.execute('''CREATE TABLE ships_per_port_table AS SELECT "VesselName", "PORT_NAME", count(DISTINCT "subgroup") FROM pings_db_withVC GROUP BY 1 , 2 ''')
 con.commit()
 ####

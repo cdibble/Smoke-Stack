@@ -14,10 +14,9 @@ import datetime
 import os
 # import rasterio
 from shapely.geometry import Point, Polygon
-
+import shapely.geometry
+from shapely import wkt
 import shapely
-# import geopyspark
-# import geopandas 
 from shapely.ops import transform
 import geopyspark
 import pyproj # projection strings for geospatial
@@ -34,9 +33,9 @@ sqlContext = SQLContext(sc)
 sc.setLogLevel("ERROR")
 
 ## Functions
-	# NOTE: This should be moved to a different file and passed as functions to all scripts that use it
 def lonLatString_to_geoPoint(lon, lat):
-	points = Point(float(lon), float(lat)).wkt
+	points = shapely.geometry.Point(float(lon), float(lat))#.wkt
+	# points = [float(lon), float(lat)]#.wkt
 	return points
 # Register UDF
 lonLatString_to_geoPoint_udf = psql.udf(lonLatString_to_geoPoint)
@@ -71,6 +70,12 @@ def polygon_contains_point(polygonWKT, pointWKT):
    return sh_polygon.contains(sh_point)
 polygon_contains_point_udf = psql.udf(polygon_contains_point)
 
+def polygon_contains_point(polygonWKT, pointLon, pointLat):
+   sh_polygon = shapely.wkt.loads(polygonWKT)
+   sh_point = shapely.geometry.Point(float(pointLon), float(pointLat))
+   return sh_polygon.contains(sh_point)
+polygon_contains_point_udf = psql.udf(polygon_contains_point)
+
 def write_csv_to_parquet(spark, df_to_write):
 	# Write Parquet to S3 
 	target_bucket_dir = "s3a://ais-ship-pings-parquet/"
@@ -86,13 +91,14 @@ ports = sqlContext.read.parquet(source_bucket_dir_ports + source_file_name_ports
 source_bucket_dir_pings = "s3a://ais-ship-pings-parquet/"
 source_file_name_pings = "pings.parquet"
 pings = sqlContext.read.parquet(source_bucket_dir_pings + source_file_name_pings) # Fastest by an order of mag
-# pings.count() = 218,689,038  
+# pings.count() = 218,689,038 
+# Filter to VesselCategory != "Other"
+vessel_types = [30, 21, 22, 21, 32, 52, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89]
+pings = pings.where(pings.VesselType.cast("Double").isin(vessel_types))
 
 # Invoke Function for geoHashing Ports:
 # see benchmarking results for cell_size_degrees
 cell_size_degrees = 0.4
-# cell_size_degrees = 0.5
-# cell_size_degrees = 0.6
 ports = ports.withColumn("GRID_CELLS", polygon_to_gridCell_hashSet_udf(ports.POLYGON10KM, psql.lit(cell_size_degrees)))
 ports = ports.withColumn("GRID_CELLS", psql.expr("substring(GRID_CELLS, 2, (length(GRID_CELLS)-1))"))
 
@@ -111,40 +117,64 @@ ports_geoHash = ports_geoHash.withColumn('GRID_POINTS', psql.regexp_extract('val
 pings = pings.withColumn("GRID_X", psql.floor(pings.LON.cast('Double')/cell_size_degrees))
 pings = pings.withColumn("GRID_Y", psql.floor(pings.LAT.cast('Double')/cell_size_degrees))
 
-	# Testing: Find Bay Area Hits
-	# ports_geoHash.filter((psql.col("Y") > 36) & (psql.col("Y") < 39) & (psql.col("X") < -120) & (psql.col("X") > -123)).show()
-	# pings.filter((psql.col("LAT") > 36) & (psql.col("LAT") < 39) & (psql.col("LON") < -120) & (psql.col("LON") > -123)).select("LON", "LAT", "GRID_X", "GRID_Y").take(20)
+# Testing: Find Bay Area Hits
+# ports_geoHash.filter((psql.col("Y") > 36) & (psql.col("Y") < 39) & (psql.col("X") < -120) & (psql.col("X") > -123)).show()
+# pings.filter((psql.col("LAT") > 36) & (psql.col("LAT") < 39) & (psql.col("LON") < -120) & (psql.col("LON") > -123)).select("LON", "LAT", "GRID_X", "GRID_Y").take(20)
 
-# pingsB = pings.filter(pings.Status == 'moored').limit(250) # for testing
+# pingsD = pings.filter(pings.Status == 'moored').limit(250) # for testing
 # jpings.filter(jpings.PORT_NAME.isNotNull()).count() # for testing
-pings = pings.join(psql.broadcast(ports_geoHash.select("PORT_NAME", "POLYGON10KM", "LON_CELL", "LAT_CELL")), on = (pings.GRID_X == ports_geoHash.LON_CELL) & (pings.GRID_Y == ports_geoHash.LAT_CELL), how = 'left_outer')
-	# pings.count() # Benchmarking experiment
-	# pings.select("PORT_NAME").distinct().show() # Testing 
-	# pings.select("PORT_NAME").distinct().count() # Testing: Should be 150 if all ports were matched.
-	# pings_port_list = pings.select("PORT_NAME").distinct().collect()
-	# pings_port_listed = [row[0] for row in pings_port_list]
-	# port_ports = ports.select("PORT_NAME").distinct().collect()
-	# port_ports_listed = [row[0] for row in port_ports]
-	# missing_ports = [x for x in port_ports_listed if x not in pings_port_listed]
+# pings = pings.join(psql.broadcast(ports_geoHash.select("PORT_NAME", "POLYGON10KM", "LON_CELL", "LAT_CELL")), on = (pings.GRID_X == ports_geoHash.LON_CELL) & (pings.GRID_Y == ports_geoHash.LAT_CELL), how = 'inner') # broadcast doesn't seem to improve performance
+pings = pings.join(ports_geoHash.select("PORT_NAME", "POLYGON10KM", "LON_CELL", "LAT_CELL"), on = (pings.GRID_X == ports_geoHash.LON_CELL) & (pings.GRID_Y == ports_geoHash.LAT_CELL), how = 'inner')
+###### Benchmarking experiment ######
+# pings.count() 
+# pings.select("PORT_NAME").distinct().show() # Testing 
+# pings.select("PORT_NAME").distinct().count() # Testing: Should be 150 if all ports were matched.
+# pings_port_list = pings.select("PORT_NAME").distinct().collect()
+# pings_port_listed = [row[0] for row in pings_port_list]
+# port_ports = ports.select("PORT_NAME").distinct().collect()
+# port_ports_listed = [row[0] for row in port_ports]
+# missing_ports = [x for x in port_ports_listed if x not in pings_port_listed]
+####################################
+# Drop uneeded columns
+drop_cols = {"IMO", "CallSign", "GRID_X", "GRID_Y", "LON_CELL", "LAT_CELL"}
+pings = pings.select([columns for columns in pings.columns if columns not in drop_cols])
 
-# Now test those that matched
-# pings_to_test = pings.PORT_NAME.isNotNull().count()
-# pings_to_test = pings.select("PORT_NAME").where("PORT_NAME is not Null") # works
-pings_to_test = pings.filter(pings.PORT_NAME.isNotNull()) # 78621860
-# pings_outside = pings.filter(pings.PORT_NAME.isNull()) # 78621860
+### Write Postgres database: "pings_commercial" = pings dropping "VesselCatgeory" == "Other" 
+# pings = pings.repartition(100)
+pings = pings.repartition($"PORT_NAME")
+saveMode="overwrite"
+pings.write \
+.format("jdbc") \
+.option("driver", "org.postgresql.Driver") \
+.option("dbtable", "pings_commercial") \
+.option("url", 'jdbc:postgresql://10.0.0.14:5432/pings_2015_to_2017') \
+.option("user", "db_user") \
+.option("password", "look_at_data") \
+.save(mode=saveMode)
 
-# pings_to_test.count() # Benchmarking experiment
-# pings_outside.count() # Benchmarking experiment
+# Apply UDF to check wehther geoHash match is truly in port 20 km polygon.
+# pings_to_test = pings.withColumn('LON_LAT', lonLatString_to_geoPoint_udf(pings.LON, pings.LAT))
+# pings_final = pings.withColumn('inPortTrue', polygon_contains_point_udf(pings.POLYGON10KM, pings.LON, pings.LAT))
+# pings_final = pings_final.drop("POLYGON10KM")
+# pings_final_in_port = pings_final.filter(pings_final.inPortTrue == True)
 
-# Perform final checks
-pings_to_test = pings_to_test.withColumn('LON_LAT', lonLatString_to_geoPoint_udf(pings_to_test.LON, pings_to_test.LAT))
-pings_final = pings_to_test.withColumn('inPortTrue', polygon_contains_point_udf(pings_to_test.POLYGON10KM, pings_to_test.LON_LAT))
-pings_final = pings_final.filter(pings_final.inPortTrue == True).drop("POLYGON10KM")
-### Cumulative Time
+# OR skip the UDF and just drop the polygon
+pings_final_in_port = pings.drop("POLYGON10KM")
+
+### Write Postgres database: "pings_commercial" = pings dropping "VesselCatgeory" == "Other" 
+# pings_final_in_port = pings_final_in_port.repartition($"PORT_NAME")
+# saveMode="overwrite"
+# pings_final_in_port.write \
+# .format("jdbc") \
+# .option("driver", "org.postgresql.Driver") \
+# .option("dbtable", "pings_commercial_with_udf") \
+# .option("url", 'jdbc:postgresql://10.0.0.14:5432/pings_2015_to_2017') \
+# .option("user", "db_user") \
+# .option("password", "look_at_data") \
+# .save(mode=saveMode)
+
+### Assigning Visits for each PORT_NAME and VesselName
 # see: https://stackoverflow.com/questions/45737199/pyspark-window-function-with-condition
-# 1. orderBy("BaseDateTime")
-# 2. groupBy("PORT_NAME", "VesselType", "VesselName", "MMSI")
-# 3. withColumn('cumulative_visit_time', )
 # For Testing
 # 'Port Everglades, FL'
 # 319642000
@@ -152,20 +182,34 @@ pings_final = pings_final.filter(pings_final.inPortTrue == True).drop("POLYGON10
 # pings_test_df = spark.createDataFrame(pings_test)
 
 # Create visit_index based on assuming a break in time-stamps > 48 hours is a new visit.
-	# Requires using window functions on partitions by port and mmsi (ship identifier)
-window_for_timediff = Window.partitionBy("PORT_NAME", "MMSI").orderBy("BaseDateTime")
+	# Requires using window functions on partitions by port and ship name
+# First, define Window
+window_for_timediff = Window.partitionBy("PORT_NAME", "VesselName").orderBy("BaseDateTime")
+# Then create column with time lagged by one ping for each ship and port
+# And create a column, 'dt', that representes the time difference between pings on the same data partitions
+df_lag = pings_final_in_port. \
+withColumn('BaseDateTime_prev', lag(pings.BaseDateTime, 1).over(window_for_timediff)).\
+select(*[psql.col(x) for x in pings_final_in_port.columns], \
+(psql.unix_timestamp(pings_final_in_port.BaseDateTime) - psql.unix_timestamp(psql.col('BaseDateTime_prev'))).alias('dt'))\
 
-df_lag = pings_final.orderBy("BaseDateTime").\
-withColumn('BaseDateTime_prev', lag(pings_final.BaseDateTime, 1).over(window_for_timediff)).\
-select(*[psql.col(x) for x in pings_final.columns], \
-(psql.unix_timestamp(pings_final.BaseDateTime) - psql.unix_timestamp(psql.col('BaseDateTime_prev'))).alias('dt'))\
-# withColumn('visit_index', psql.row_number().over(window_for_timediff).cast('INT')).\
-# withColumn('visit_index', psql.when((psql.col("dt") > 1728), 1).otherwise(psql.col('visit_index'))).\
-
+# Flag the 'dt' values with a 1 if the time between pings is > 48 hours
 df_lag = df_lag.withColumn("indicator", (df_lag.dt > (48*3600)).cast("int")) # flag new visit starts
-df_lag = df_lag.fillna({'indicator' : 0})
+df_lag = df_lag.fillna({'indicator' : 0}) # Fill NA values with 0
+# Apply rolling cumulative sum over the data partitions to build index of visits for each ship and port.
 df_lag = df_lag.withColumn("subgroup", psql.sum("indicator").over(window_for_timediff))
-window_for_visit_index = Window.partitionBy("PORT_NAME", "MMSI", "subgroup").orderBy("BaseDateTime")
-df_lag = df_lag.withColumn("visit_index", psql.first("BaseDateTime").over(window_for_visit_index))
 
-write_csv_to_parquet(sc, df_lag)
+# write_csv_to_parquet(sc, df_lag)
+
+### Write Postgres database: "pings_commercial" = pings dropping "VesselCatgeory" == "Other" 
+# pings = pings.repartition(200)
+df_lag = df_lag.repartition($"PORT_NAME")
+saveMode="overwrite"
+df_lag.write \
+.format("jdbc") \
+.option("driver", "org.postgresql.Driver") \
+.option("dbtable", "pings_final_in_port_with_visitSubgroup_noudf") \
+.option("url", 'jdbc:postgresql://10.0.0.14:5432/pings_2015_to_2017') \
+.option("user", "db_user") \
+.option("password", "look_at_data") \
+.save(mode=saveMode)
+

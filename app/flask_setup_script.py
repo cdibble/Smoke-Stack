@@ -14,12 +14,8 @@ sudo apt-get install python3-venv
 python3 -m venv venv #--without-pip # create python vitrual environment from wtihin flask-sample-app
 
 # pip3 install Flask # install Flask in virtual env.
-sudo apt install python3-flask
+# sudo apt install python3-flask
 sudo apt-get install libpq-dev
-# pip3 install psycopg2
-# pip3 install flask_sqlalchemy
-# pip3 install flask_script
-# pip3 install flask_migrate
 cd ~/Smoke-Stack/app # use the following to ensure install in virtual env.
 /home/ubuntu/Smoke-Stack/venv/bin/python3 -m pip install matplotlib
 /home/ubuntu/Smoke-Stack/venv/bin/python3 -m pip install Flask
@@ -34,7 +30,6 @@ cd ~/Smoke-Stack/app # use the following to ensure install in virtual env.
 /home/ubuntu/Smoke-Stack/venv/bin/python3 -m pip install psycopg2
 /home/ubuntu/Smoke-Stack/venv/bin/python3 -m pip install seaborn
 /home/ubuntu/Smoke-Stack/venv/bin/python3 -m pip install pandas
-
 
 export FLASK_APP=hello.py # export FLASK_APP variable
 flask run --host=0.0.0.0 # launch FLASK App
