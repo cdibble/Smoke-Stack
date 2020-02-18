@@ -26,7 +26,9 @@ Global trade relies on the constant movement of goods by maritime shipping, but 
 
 [Emissions of NOx, SO2, CO, and HCHO from commercial marine shipping during Texas Air Quality Study](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2009JD012094)
 
-Automatic Identification System (AIS), which tracks the movement of ships using ship-to-shore radio, has been required on large commercial vessels in since 2002. With AIS, it is possible to inventory the emissions of ships while in port and to track trends in air quality in port areas related to shipping activity.
+Automatic Identification System (AIS), which tracks the movement of ships using ship-to-shore radio, has been required on large commercial vessels in since 2002. With AIS, it is possible to inventory the emissions of ships while in port and to track trends in air quality in port areas related to shipping activity. This fundamentally a function of time spent in port, ship size, and operational protocols in port, which vary with regulations and shipping companies.
+
+By tracking the time ships spend in ports and scaling by their size, Smoke Stack provides an estimate of ship emissions and the basis for tailored models to match with ship protocols and port regulations. Coupled with local air quality sensor data, Smoke Stack is a powerful platform for tracking emissions, evaluating mitigation efforts, and quantifying results.
 
 ## User Guide
 Smoke Stack exposes the data via a simple GUI as well as through a RESTful API. They are described briefly below. For more information about building the project and the implementation details, [engineering details](README.md#Engineering-Details) is a good place to start.
