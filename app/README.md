@@ -4,7 +4,7 @@ The Smoke Stack GUI and API were built in Python using the Flask microserver fra
 
 The GUI was designed to provide a simple mechanism with which to view trends in the data. Currently it supports viewing invidiual ports or individual ships using drop-down menus. Future updates will include multiple-selectin and map drag-select support.
 
-The API was designed to provide data access to enable analyses and custom visualizations. Details on API endpoints can be found in the [README.md](README.md#User-Guide) file in the root directory of this repository.
+The API was designed to provide data access to enable analyses and custom visualizations. Details on API endpoints can be found in the [README.md](/README.md#User-Guide) file in the root directory of this repository.
 
 In this directory, the following scripts support the front-end:
 

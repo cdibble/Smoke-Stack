@@ -131,7 +131,7 @@ Coming Soon : Ship query - All port visits for given ship per time range.
 1. Data from 2012-2015, extracted from .gdb format.
 
 ## Engineering Details
-The project was implemented in stages that reflect the directory structure of this repository: [ingestion](/ingestion), [data processing](/data-processing), [database build](/database-scripts), and [data exposure](/app). See README.md in those directories for more details.
+The project was implemented in stages that reflect the directory structure of this repository: [ingestion](/ingestion), [data processing](/data-processing), [database build](/database-scripts), and [data exposure/front-end](/app). See README.md in those directories for more details.
 
 Spark did the distributed processing needed to extract the data from its home server (marinecadastre.gov), store it in an S3 data lake, and apply geo-hashing and processing steps. Intermediate data structures were stored in S3 as parquet files awaiting appends from the roughly five years of earlier data that is accessible only in ESRI geodatabase (.gdb) format. Looping back to retrieve that data and parse it is on the to-do list.
 
