@@ -7,8 +7,8 @@ sudo -u postgres -i
 psql -l  | grep pings_db
 psql 
 CREATE USER db_user WITH PASSWORD 'look_at_data';
-CREATE DATABASE pings_2016_2017 TABLESPACE pings_database;
-GRANT ALL PRIVILEGES ON DATABASE pings_2016_2017 TO db_user;
+CREATE DATABASE pings_2015_to_2017_v2 TABLESPACE pings_database;
+GRANT ALL PRIVILEGES ON DATABASE pings_2015_to_2017_v2 TO db_user;
 
 # Start postgres server
 sudo service postgresql start

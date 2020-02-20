@@ -173,7 +173,7 @@ def aggregate_ship_visits_total_time(SHIP):
 	curs.execute(''' SELECT "VesselName", "PORT_NAME", "VesselCategory", "Total_Visit_Time" FROM ship_visit_total_time WHERE "VesselName" = '{}' '''.format(SHIP))
 	daily_ships_in_port = curs.fetchall()
 	return daily_ships_in_port
-# aggregate_ship_visits_total_time('DENNIS C BOTTORFF')
+# aggregate_ship_visits_total_time('DENNIS C BOTTORFF') # for testing
 
 def plot_ship_visits_total_time(SHIP):
 	ships_visit_time_per_port = pd.DataFrame(aggregate_ship_visits_total_time(SHIP), columns = ["VesselName", "PORT_NAME", "VesselCategory", "Total_Visit_Time"])
@@ -224,7 +224,9 @@ def ship_index():
 		ship = request.form.get("ship")
 		connection = get_db() #psycopg2.connect("dbname=pings_db_withVC user=db_user password=look_at_data host=44.232.197.79 port=5432")
 		cursor = connection.cursor()
-	return render_template("ship_index.html", ship_list = ship_list_overall, port_list = port_list, ship = "MADISON")
+		ship_plot_url = plot_ship_visits_per_port("MADISON")
+		ship_plot_total_time_url = plot_ship_visits_total_time("MADISON")
+	return render_template("ship_index.html", ship_list = ship_list_overall, port_list = port_list, plot_url = ship_plot_url, ship_plot_total_time = ship_plot_total_time_url, ship = "MADISON")
 
 @app.route('/ship_compute', methods=['GET', 'POST'])
 def ship_compute():

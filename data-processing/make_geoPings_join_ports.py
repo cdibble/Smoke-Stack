@@ -93,7 +93,7 @@ source_file_name_pings = "pings.parquet"
 pings = sqlContext.read.parquet(source_bucket_dir_pings + source_file_name_pings) # Fastest by an order of mag
 # pings.count() = 218,689,038 
 # Filter to VesselCategory != "Other"
-vessel_types = [30, 21, 22, 21, 32, 52, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89]
+vessel_types = [30, 1001, 1002, 21, 22, 21, 32, 52, 1023, 1025, 36, 37, 1019, 1021, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 1012, 1013, 1014, 1015, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 1003, 1004, 1016, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 1017, 1024]
 pings = pings.where(pings.VesselType.cast("Double").isin(vessel_types))
 
 # Invoke Function for geoHashing Ports:
@@ -184,11 +184,14 @@ pings_final_in_port = pings.drop("POLYGON10KM")
 # Create visit_index based on assuming a break in time-stamps > 48 hours is a new visit.
 	# Requires using window functions on partitions by port and ship name
 # First, define Window
+pings_final_in_port = pings_final_in_port.filter((psql.col("PORT_NAME") == 'San Francisco, CA') & (psql.col("VesselType").cast('INT') < 1000)).limit(100)
+# pings.filter((psql.col("PORT_NAME") == 'San Francisco, CA') & (psql.col("VesselType").cast('INT') < 1000)).show(20)
+
 window_for_timediff = Window.partitionBy("PORT_NAME", "VesselName").orderBy("BaseDateTime")
 # Then create column with time lagged by one ping for each ship and port
 # And create a column, 'dt', that representes the time difference between pings on the same data partitions
 df_lag = pings_final_in_port. \
-withColumn('BaseDateTime_prev', lag(pings.BaseDateTime, 1).over(window_for_timediff)).\
+withColumn('BaseDateTime_prev', lag(pings_final_in_port.BaseDateTime, 1).over(window_for_timediff)).\
 select(*[psql.col(x) for x in pings_final_in_port.columns], \
 (psql.unix_timestamp(pings_final_in_port.BaseDateTime) - psql.unix_timestamp(psql.col('BaseDateTime_prev'))).alias('dt'))\
 

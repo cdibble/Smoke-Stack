@@ -59,3 +59,10 @@ sudo su - # switch to user su
 export FLASK_APP=AIS_Pings_App.py
 nohup flask run --host=0.0.0.0 --port=80 &
 http://ec2-44-231-212-226.us-west-2.compute.amazonaws.com:80/home
+
+
+# PostgreSQL
+# Determining missing Ports 
+create table ports_written_in_sd as select distinct "PORT_NAME" from pings_final_in_port_with_visitsubgroup_noudf;
+create table ports_not_written_in_sd as select distinct "PORT_NAME" from pings_commercial;
+select * from ports_not_written_in_sd where "PORT_NAME" not in (select * from ports_written_in_sd);
