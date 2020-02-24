@@ -77,7 +77,7 @@ def get_port_coords(PORT_NAME):
 def aggregate_by_port_ships_per_date(PORT_NAME):
 	con = get_db()
 	curs = con.cursor()
-	curs.execute(''' SELECT "date", "VesselCategory", "count" FROM daily_ships_table2 WHERE "PORT_NAME" = '{}' '''.format(PORT_NAME))
+	curs.execute(''' SELECT "date", "VesselCategory", "count" FROM daily_ships_table_v2 WHERE "PORT_NAME" = '{}' '''.format(PORT_NAME))
 	daily_ships_in_port = curs.fetchall()
 	return daily_ships_in_port
 # aggregate_by_port_ships_per_date('San Francisco, CA')
@@ -106,7 +106,7 @@ def plot_daily_ships_in_port(PORT_NAME):
 def aggregate_ship_visits_total_time_quarterly(PORT_NAME):
 	con = get_db()
 	curs = con.cursor()
-	curs.execute(''' SELECT "Quarter", "PORT_NAME", "VesselCategory", "Total_Visit_Time" FROM ship_visit_quarterly2 WHERE "PORT_NAME" = '{}' '''.format(PORT_NAME))
+	curs.execute(''' SELECT "Quarter", "PORT_NAME", "VesselCategory", "Total_Visit_Time" FROM ship_visit_quarterly_v2 WHERE "PORT_NAME" = '{}' '''.format(PORT_NAME))
 	daily_ships_in_port = curs.fetchall()
 	return daily_ships_in_port
 # aggregate_by_port_ships_per_date('Port Fourchon, LA')
@@ -139,7 +139,7 @@ def plot_ship_visits_total_time_quarterly(PORT_NAME):
 def aggregate_ship_visits_per_port(SHIP):
 	con = get_db()
 	curs = con.cursor()
-	curs.execute(''' SELECT "VesselName", "PORT_NAME", "count" FROM ships_per_port_table2 WHERE "VesselName" = '{}' '''.format(SHIP))
+	curs.execute(''' SELECT "VesselName", "PORT_NAME", "count" FROM ships_per_port_table_v2 WHERE "VesselName" = '{}' '''.format(SHIP))
 	daily_ships_in_port = curs.fetchall()
 	return daily_ships_in_port
 # aggregate_ship_visits_per_port('DENNIS C BOTTORFF')
@@ -170,7 +170,7 @@ def plot_ship_visits_per_port(SHIP):
 def aggregate_ship_visits_total_time(SHIP):
 	con = get_db()
 	curs = con.cursor()
-	curs.execute(''' SELECT "VesselName", "PORT_NAME", "VesselCategory", "Total_Visit_Time" FROM ship_visit_total_time2 WHERE "VesselName" = '{}' '''.format(SHIP))
+	curs.execute(''' SELECT "VesselName", "PORT_NAME", "VesselCategory", "Total_Visit_Time" FROM ship_visit_total_time_v2 WHERE "VesselName" = '{}' '''.format(SHIP))
 	daily_ships_in_port = curs.fetchall()
 	return daily_ships_in_port
 # aggregate_ship_visits_total_time('DENNIS C BOTTORFF') # for testing

@@ -6,9 +6,9 @@ sudo -u postgres -i
 # createdb pings_db -O postgres # use different tablespace
 psql -l  | grep pings_db
 psql 
-CREATE USER db_user WITH PASSWORD 'look_at_data';
+CREATE USER xxxxx WITH PASSWORD 'xxxxxx';
 CREATE DATABASE pings_2015_to_2017_v2 TABLESPACE pings_database;
-GRANT ALL PRIVILEGES ON DATABASE pings_2015_to_2017_v2 TO db_user;
+GRANT ALL PRIVILEGES ON DATABASE pings_2015_to_2017_v2 TO xxxxx;
 
 # Start postgres server
 sudo service postgresql start

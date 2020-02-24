@@ -99,21 +99,27 @@ con.commit()
 # 	GROUP BY 1, 2, 3, 4, 5, 6 ''')
 # con.commit()
 ####
-
+con = get_db()
+curs = con.cursor()
+curs.execute('''
+CREATE TABLE subset AS
+SELECT * FROM pings_db_with_vesselCategory_v2 LIMIT 5000
+''')
+con.commit()
 #### 3 C: ship_visit_time_by_port_quarterly():
 # TABLE GROUPS BY SHIP, PORT_NAME, and subgroup (== visit) AND AGGREGATES VISIT_TIME
 con = get_db()
 curs = con.cursor()
 # curs.execute(" DROP TABLE ship_visit_quarterly ") # drop if exists
-curs.execute('''CREATE TABLE ship_visit_quarterly2 AS
-	SELECT "PORT_NAME", "VesselCategory",
-	(EXTRACT(YEAR FROM "BaseDateTime")+1) - (-0.25*EXTRACT(QUARTER FROM "BaseDateTime") + 1.25) as "Quarter",
-	(
-	SELECT * FROM pings_db_with_vesselCategory_v2
-	-- SUM(DISTINCT ) AS "Total_Visit_Time"
-	)
-	FROM ships_per_port_table_v2
-	GROUP BY 1, 2, 3 ''')
+curs.execute('''CREATE TABLE ship_visit_quarterly_v2 AS
+	SELECT "PORT_NAME", "VesselCategory", "Quarter", SUM("daysinport") as Total_DaysInPort_For_VesselCategory FROM
+	(SELECT "PORT_NAME", "VesselCategory", "VesselName",
+		(EXTRACT( YEAR FROM "BaseDateTime")+1) - (-0.25*EXTRACT(QUARTER FROM "BaseDateTime") + 1.25) as "Quarter",
+		count(DISTINCT DATE("BaseDateTime")) AS DaysInPort
+		FROM pings_db_with_vesselCategory_v2
+		GROUP BY 1, 2, 3, 4) AS sub_table
+	GROUP BY 1, 2, 3
+	''')
 con.commit()
 ####
 
